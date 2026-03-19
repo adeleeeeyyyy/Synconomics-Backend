@@ -1,0 +1,143 @@
+package handlers
+
+import (
+	"Synconomics/services"
+	"net/http"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"github.com/markbates/goth/gothic"
+)
+
+type AuthHandler struct {
+	authService services.AuthService
+}
+
+func NewAuthHandler(authService services.AuthService) *AuthHandler {
+	return &AuthHandler{authService}
+}
+
+type RegisterRequest struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (h *AuthHandler) Register(c *fiber.Ctx) error {
+	req := new(RegisterRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid body request",
+		})
+	}
+
+	user, token, err := h.authService.Register(req.Name, req.Email, req.Password)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(201).JSON(fiber.Map{
+		"token": token,
+		"user":  user,
+	})
+}
+
+func (h *AuthHandler) Login(c *fiber.Ctx) error {
+	req := new(LoginRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "invalid body request",
+		})
+	}
+
+	user, token, err := h.authService.Login(req.Email, req.Password)
+	if err != nil {
+		return c.Status(401).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"token": token,
+		"user":  user,
+	})
+}
+
+// GoogleLogin memulai flow OAuth Google.
+// Menggunakan adaptor Fiber→net/http karena gothic dirancang untuk net/http.
+func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
+	// gothic.BeginAuthHandler perlu net/http ResponseWriter & Request
+	// adaptor.HTTPHandlerFunc mengkonversi net/http handler ke Fiber handler
+	handler := adaptor.HTTPHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set query param "provider" agar gothic tahu provider-nya
+		q := r.URL.Query()
+		q.Set("provider", "google")
+		r.URL.RawQuery = q.Encode()
+		gothic.BeginAuthHandler(w, r)
+	})
+	return handler(c)
+}
+
+func (h *AuthHandler) Profile(c *fiber.Ctx) error {
+	userID, ok := c.Locals("userID").(uint)
+	if !ok {
+		return c.Status(401).JSON(fiber.Map{"error": "unauthorized"})
+	}
+
+	user, token, err := h.authService.GetProfile(userID)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "user not found"})
+	}
+
+	return c.JSON(fiber.Map{
+		"token": token,
+		"user":  user,
+	})
+}
+
+// GoogleCallback menangani callback dari Google setelah user authorize.
+func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
+	var googleUser interface{ GetUserID() string }
+	_ = googleUser
+
+	var completeErr error
+	var token string
+
+	handler := adaptor.HTTPHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		q.Set("provider", "google")
+		r.URL.RawQuery = q.Encode()
+
+		gu, err := gothic.CompleteUserAuth(w, r)
+		if err != nil {
+			completeErr = err
+			return
+		}
+
+		_, t, err := h.authService.HandleGoogleCallback(gu)
+		if err != nil {
+			completeErr = err
+			return
+		}
+		token = t
+	})
+
+	if err := handler(c); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if completeErr != nil {
+		return c.Status(401).JSON(fiber.Map{"error": "google authentication failed: " + completeErr.Error()})
+	}
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	return c.Redirect(frontendURL + "/auth/callback?token=" + token)
+}
