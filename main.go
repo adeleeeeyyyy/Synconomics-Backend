@@ -1,46 +1,57 @@
 package main
 
 import (
-    "log"
-    "os"
+	"log"
+	"os"
 
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/logger"
-    "github.com/gofiber/fiber/v2/middleware/recover"
-    "github.com/joho/godotenv"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 
-    "Synconomics/config"
-    "Synconomics/handlers"
-    "Synconomics/repositories"
-    "Synconomics/services"
+	"Synconomics/config"
+	"Synconomics/handlers"
+	"Synconomics/repositories"
+	"Synconomics/services"
 )
 
 func main() {
-    godotenv.Load()
+	godotenv.Load()
 
-    // connect database
-    config.ConnectDB()
+	// setup OAuth providers
+	config.SetupOauth()
 
-    // dependency injection
-    userRepo    := repositories.NewUserRepository(config.DB)
-    userService := services.NewUserService(userRepo)
-    userHandler := handlers.NewUserHandler(userService)
+	// connect database
+	config.ConnectDB()
 
-    app := fiber.New()
-    app.Use(recover.New())
-    app.Use(logger.New())
+	// dependency injection
+	userRepo := repositories.NewUserRepository(config.DB)
+	authService := services.NewAuthServices(userRepo)
+	authHandler := handlers.NewAuthHandler(authService)
 
-    // public routes
-    api := app.Group("/api")
-    api.Post("/register", userHandler.Register)
-    api.Post("/login",    userHandler.Login)
+	app := fiber.New()
+	app.Use(recover.New())
+	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3000",
+	}))
 
-    // protected routes
-    api.Get("/profile", handlers.JWTMiddleware, userHandler.Profile)
+	// public routes
+	api := app.Group("/api")
+	api.Post("/register", authHandler.Register)
+	api.Post("/login", authHandler.Login)
 
-    port := os.Getenv("APP_PORT")
-    if port == "" {
-        port = "8080"
-    }
-    log.Fatal(app.Listen(":" + port))
+	// Google OAuth routes
+	api.Get("/auth/google", authHandler.GoogleLogin)
+	api.Get("/auth/google/callback", authHandler.GoogleCallback)
+
+	// protected routes
+	api.Get("/profile", handlers.JWTMiddleware, authHandler.Profile)
+
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(app.Listen(":" + port))
 }
