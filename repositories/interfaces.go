@@ -9,3 +9,11 @@ type UserRepository interface{
 	Create(user *models.User) error
 	Update(user *models.User) error
 }
+
+type ProductRepository interface {
+	Create(product *models.Product) error
+	FindAll() ([]models.Product, error)
+	FindByID(id uint) (*models.Product, error)
+	Update(product *models.Product) error
+	Delete(id uint) error
+}

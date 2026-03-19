@@ -12,3 +12,11 @@ type AuthService interface {
 	HandleGoogleCallback(googleUser goth.User) (*models.User, string, error)
 	GetProfile(userID uint) (*models.User, string, error)
 }
+
+type ProductService interface {
+	CreateProduct(product *models.Product) error
+	GetAllProducts() ([]models.Product, error)
+	GetProductById(id uint) (*models.Product, error)
+	UpdateProduct(product *models.Product) error
+	DeleteProduct(id uint) error 
+}
