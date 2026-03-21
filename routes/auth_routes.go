@@ -13,8 +13,8 @@ func SetupAuthRoutes(api fiber.Router) {
 	authService := services.NewAuthServices(userRepo)
 	authHandler := handlers.NewAuthHandler(authService)
 
-	api.Post("/register", authHandler.Register)
-	api.Post("/login", authHandler.Login)
+	api.Post("/auth/register", authHandler.Register)
+	api.Post("/auth/login", authHandler.Login)
 
 	api.Get("/auth/google", authHandler.GoogleLogin)
 	api.Get("/auth/google/callback", authHandler.GoogleCallback)

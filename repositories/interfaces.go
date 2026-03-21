@@ -17,3 +17,11 @@ type ProductRepository interface {
 	Update(product *models.Product) error
 	Delete(id uint) error
 }
+
+type BusinessRepository interface {
+	Create(business *models.Business) error
+	FindAll() ([]models.Business, error)
+	FindByID(id uint) (*models.Business, error)
+	Update(business *models.Business) error
+	Delete(id uint) error
+}

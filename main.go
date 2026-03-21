@@ -9,11 +9,23 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
+	"github.com/gofiber/swagger"
 
 	"Synconomics/config"
 	"Synconomics/routes"
+	_ "Synconomics/docs"
 )
 
+// @title Synconomics API
+// @version 1.0
+// @description API for Synconomics, build with go
+// @termsOfService http://swagger.io/terms/
+// @BasePath /api
+//
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer " followed by your JSON Web Token. Example: "Bearer eyJhb..."
 func main() {
 	godotenv.Load()
 
@@ -30,10 +42,13 @@ func main() {
 		AllowOrigins: "http://localhost:3000",
 	}))
 
+	app.Get("/swagger/*", swagger.HandlerDefault)
+
 	api := app.Group("/api")
 
 	routes.SetupAuthRoutes(api)
 	routes.SetupProductRoutes(api)
+	routes.SetupBusinessRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

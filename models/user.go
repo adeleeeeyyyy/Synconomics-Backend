@@ -10,6 +10,7 @@ type User struct {
 	Replies           []Reply            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Threads           []Thread           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	ProductSearchLogs []ProductSearchLog `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Business          *Business          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
 	Name     string  `json:"name"                    gorm:"type:varchar(100);not null"`
 	Email    string  `json:"email"                   gorm:"type:varchar(100);uniqueIndex;not null"`

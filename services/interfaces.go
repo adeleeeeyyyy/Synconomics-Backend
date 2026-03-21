@@ -20,3 +20,11 @@ type ProductService interface {
 	UpdateProduct(product *models.Product) error
 	DeleteProduct(id uint) error 
 }
+
+type BusinessService interface {
+	CreateBusiness(business *models.Business) error
+	GetAllBusinesses() ([]models.Business, error)
+	GetBusinessById(id uint) (*models.Business, error)
+	UpdateBusiness(business *models.Business) error
+	DeleteBusiness(id uint) error 
+}

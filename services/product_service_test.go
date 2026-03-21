@@ -2,6 +2,7 @@ package services
 
 import (
 	"Synconomics/models"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,5 +53,39 @@ func TestCreateProduct_Success(t *testing.T) {
 	err := service.CreateProduct(productInput)
 
 	assert.NoError(t, err)
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetAllProducts_Success(t *testing.T) {
+	mockRepo := new(MockProductRepository)
+	service := NewProductService(mockRepo)
+
+	expectedProducts := []models.Product{
+		{Name: "Kopi Susu", Price: 15000},
+		{Name: "Roti Bakar", Price: 20000},
+	}
+
+	mockRepo.On("FindAll").Return(expectedProducts, nil)
+
+	result, err := service.GetAllProducts()
+
+	assert.NoError(t, err)
+	assert.Len(t, result, 2)
+	assert.Equal(t, "Kopi Susu", result[0].Name)
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetProductByID_NotFound(t *testing.T) {
+	mockRepo := new(MockProductRepository)
+	service := NewProductService(mockRepo)
+
+	expectedErr := errors.New("record not found")
+	mockRepo.On("FindByID", uint(99)).Return(nil, expectedErr)
+
+	result, err := service.GetProductById(99)
+
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, expectedErr, err)
 	mockRepo.AssertExpectations(t)
 }

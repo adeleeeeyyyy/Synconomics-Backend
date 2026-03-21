@@ -29,6 +29,16 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+// Register
+// @Summary Register pengguna baru
+// @Description Mendaftarkan user baru menggunakan nama, email, dan password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body handlers.RegisterRequest true "Register Data"
+// @Success 201 {object} fiber.Map
+// @Failure 400 {object} fiber.Map "invalid body request"
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	req := new(RegisterRequest)
 	if err := c.BodyParser(req); err != nil {
@@ -50,6 +60,17 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	})
 }
 
+// Login
+// @Summary Login pengguna
+// @Description Authentikasi user yang ada menghasilkan JWT token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body handlers.LoginRequest true "Login Data"
+// @Success 200 {object} fiber.Map
+// @Failure 400 {object} fiber.Map
+// @Failure 401 {object} fiber.Map
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
 	if err := c.BodyParser(req); err != nil {
@@ -73,6 +94,10 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 
 // GoogleLogin memulai flow OAuth Google.
 // Menggunakan adaptor Fiber→net/http karena gothic dirancang untuk net/http.
+// @Summary Memulai login Google
+// @Description Redirect ke Google OAuth Login
+// @Tags auth
+// @Router /auth/google [get]
 func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
 	// gothic.BeginAuthHandler perlu net/http ResponseWriter & Request
 	// adaptor.HTTPHandlerFunc mengkonversi net/http handler ke Fiber handler
@@ -86,6 +111,16 @@ func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
 	return handler(c)
 }
 
+// Profile
+// @Summary Mendapatkan profil user yang sedang login
+// @Description Mengembalikan data user berdasarkan token JWT
+// @Tags auth
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} fiber.Map
+// @Failure 401 {object} fiber.Map
+// @Failure 404 {object} fiber.Map
+// @Router /auth/profile [get]
 func (h *AuthHandler) Profile(c *fiber.Ctx) error {
 	userID, ok := c.Locals("userID").(uint)
 	if !ok {
@@ -104,6 +139,10 @@ func (h *AuthHandler) Profile(c *fiber.Ctx) error {
 }
 
 // GoogleCallback menangani callback dari Google setelah user authorize.
+// @Summary Callback dari Google OAuth
+// @Description Endpoint untuk menangani response dari Google
+// @Tags auth
+// @Router /auth/google/callback [get]
 func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 	var googleUser interface{ GetUserID() string }
 	_ = googleUser

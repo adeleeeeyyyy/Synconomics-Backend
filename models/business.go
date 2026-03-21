@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Business struct {
 	gorm.Model
-	UserID          uint
+	UserID          uint             `gorm:"uniqueIndex"`
 	User            User             `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"` // Foreign Key to User
 	Products        []Product        `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Transactions    []Transaction    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
