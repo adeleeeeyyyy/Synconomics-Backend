@@ -20,6 +20,7 @@ import (
 // @version 1.0
 // @description API for Synconomics, build with go
 // @termsOfService http://swagger.io/terms/
+// @host api-synconomics.synchronizeteams.com
 // @BasePath /api
 //
 // @securityDefinitions.apikey BearerAuth
@@ -39,7 +40,7 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: "http://localhost:3000, https://api-synconomics.synchronizeteams.com",
 	}))
 
 	app.Get("/swagger/*", swagger.HandlerDefault)

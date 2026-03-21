@@ -530,6 +530,7 @@ definitions:
       updatedAt:
         type: string
     type: object
+host: api-synconomics.synchronizeteams.com
 info:
   contact: {}
   description: API for Synconomics, build with go
