@@ -37,6 +37,27 @@ definitions:
     - business_id
     - type
     type: object
+  dto.CreateSupplyRequestReq:
+    properties:
+      business_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      status:
+        enum:
+        - open
+        - matched
+        - closed
+        type: string
+    required:
+    - business_id
+    - product_name
+    - quantity
+    - status
+    type: object
   dto.CreateTransactionItemRequest:
     properties:
       price:
@@ -81,6 +102,19 @@ definitions:
       category:
         type: string
       title:
+        type: string
+    type: object
+  dto.UpdateSupplyRequestReq:
+    properties:
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        enum:
+        - open
+        - matched
+        - closed
         type: string
     type: object
   dto.UpdateTransactionItemRequest:
@@ -1525,6 +1559,211 @@ paths:
       summary: Memperbarui parameter produk
       tags:
       - products
+  /supply-requests:
+    get:
+      description: Mengambil semua data supply request
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.SupplyRequest'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Request
+      tags:
+      - supply_requests
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data permintaan supply baru
+      parameters:
+      - description: Supply Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyRequestReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyRequest'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat Supply Request
+      tags:
+      - supply_requests
+  /supply-requests/{id}:
+    delete:
+      description: Menghapus permintaan supply
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Request
+      tags:
+      - supply_requests
+    get:
+      description: Mengambil informasi supply request menggunakan ID
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyRequest'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Request
+      tags:
+      - supply_requests
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada supply request
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyRequestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyRequest'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Supply Request
+      tags:
+      - supply_requests
+  /supply-requests/business/{id}:
+    get:
+      description: Mengambil permintaan supply milik satu bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.SupplyRequest'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Supply Request berdasarkan Business
+      tags:
+      - supply_requests
   /transaction_items:
     get:
       consumes:

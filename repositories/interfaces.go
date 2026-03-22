@@ -61,3 +61,12 @@ type AIRepository interface {
 	SaveResult(result *models.AIResult) error
 	GetResultBySessionID(sessionID uint) (*models.AIResult, error)
 }
+
+type SupplyRequestRepository interface {
+	Create(req *models.SupplyRequest) error
+	FindAll() ([]models.SupplyRequest, error)
+	FindByID(id uint) (*models.SupplyRequest, error)
+	FindByBusinessID(businessID uint) ([]models.SupplyRequest, error)
+	Update(req *models.SupplyRequest) error
+	Delete(id uint) error
+}

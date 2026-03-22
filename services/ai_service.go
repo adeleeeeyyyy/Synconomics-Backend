@@ -54,7 +54,7 @@ func (s *aiService) Chat(sessionID uint, userMessage string) (*models.AIMessage,
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-3-flash-preview")
+	model := client.GenerativeModel("gemini-1.5-flash-latest")
 
 	switch session.Type {
 	case models.IdeaGeneration:
@@ -120,7 +120,7 @@ func (s *aiService) FinalizeSessionResult(sessionID uint) (*models.AIResult, err
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-3-flash-preview")
+	model := client.GenerativeModel("gemini-1.5-flash-latest")
 	model.ResponseMIMEType = "application/json"
 
 	var fullConversation string

@@ -62,3 +62,12 @@ type AIService interface {
 	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
 	GetSessionResult(sessionID uint) (*models.AIResult, error)
 }
+
+type SupplyRequestService interface {
+	CreateSupplyRequest(req *models.SupplyRequest) error
+	GetAllSupplyRequests() ([]models.SupplyRequest, error)
+	GetSupplyRequestById(id uint) (*models.SupplyRequest, error)
+	GetSupplyRequestsByBusinessId(businessID uint) ([]models.SupplyRequest, error)
+	UpdateSupplyRequest(req *models.SupplyRequest) error
+	DeleteSupplyRequest(id uint) error
+}
