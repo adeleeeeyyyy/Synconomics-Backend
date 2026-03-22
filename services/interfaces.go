@@ -36,3 +36,21 @@ type TransactionService interface {
 	UpdateTransaction(transaction *models.Transaction) error
 	DeleteTransaction(id uint) error 
 }
+
+type TransactionItemService interface {
+	CreateTransactionItem(item *models.TransactionItem) error
+	GetAllTransactionItems() ([]models.TransactionItem, error)
+	GetTransactionItemById(id uint) (*models.TransactionItem, error)
+	GetTransactionItemsByTransactionId(transactionID uint) ([]models.TransactionItem, error)
+	UpdateTransactionItem(item *models.TransactionItem) error
+	DeleteTransactionItem(id uint) error 
+}
+
+type ExpenseService interface {
+	CreateExpense(expense *models.Expense) error
+	GetAllExpenses() ([]models.Expense, error)
+	GetExpenseById(id uint) (*models.Expense, error)
+	GetExpensesByBusinessId(businessID uint) ([]models.Expense, error)
+	UpdateExpense(expense *models.Expense) error
+	DeleteExpense(id uint) error 
+}

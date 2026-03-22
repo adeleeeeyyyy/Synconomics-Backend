@@ -1,5 +1,38 @@
 basePath: /api
 definitions:
+  dto.CreateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      business_id:
+        type: integer
+      category:
+        type: string
+      title:
+        type: string
+    required:
+    - amount
+    - business_id
+    - category
+    - title
+    type: object
+  dto.CreateTransactionItemRequest:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        minimum: 1
+        type: integer
+      transaction_id:
+        type: integer
+    required:
+    - price
+    - product_id
+    - quantity
+    - transaction_id
+    type: object
   dto.CreateTransactionRequest:
     properties:
       business_id:
@@ -19,6 +52,22 @@ definitions:
     - payment_method
     - status
     - total_amount
+    type: object
+  dto.UpdateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.UpdateTransactionItemRequest:
+    properties:
+      price:
+        type: number
+      quantity:
+        type: integer
     type: object
   dto.UpdateTransactionRequest:
     properties:
@@ -925,6 +974,213 @@ paths:
       summary: Memperbarui bisnis yang sudah ada
       tags:
       - business
+  /expenses:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data expenses yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Expense'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar expenses
+      tags:
+      - expenses
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data entitas expense baru
+      parameters:
+      - description: Expense Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat expense baru
+      tags:
+      - expenses
+  /expenses/{id}:
+    delete:
+      description: Menghapus expense dari database
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus expense
+      tags:
+      - expenses
+    get:
+      description: Mengambil informasi lengkap terkait satu expense menggunakan ID
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail expense
+      tags:
+      - expenses
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom expense
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Expense Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data expense
+      tags:
+      - expenses
+  /expenses/business/{id}:
+    get:
+      description: Mengambil kumpulan expense menggunakan Business ID
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Expense'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail expense berdasarkan Business ID
+      tags:
+      - expenses
   /products:
     get:
       consumes:
@@ -1121,6 +1377,215 @@ paths:
       summary: Memperbarui parameter produk
       tags:
       - products
+  /transaction_items:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data transaction_items yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.TransactionItem'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar transaction_items
+      tags:
+      - transaction_items
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data entitas transaction_item baru
+      parameters:
+      - description: Transaction Item Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionItemRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat transaction_item baru
+      tags:
+      - transaction_items
+  /transaction_items/{id}:
+    delete:
+      description: Menghapus transaction_item dari database
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus transaction_item
+      tags:
+      - transaction_items
+    get:
+      description: Mengambil informasi lengkap terkait satu transaction_item menggunakan
+        ID
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaction_item
+      tags:
+      - transaction_items
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom kuantitas dan harga dari sebuah entitas transaction_item
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Item Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data transaction_item
+      tags:
+      - transaction_items
+  /transaction_items/transaction/{id}:
+    get:
+      description: Mengambil informasi lengkap terkait kumpulan transaction_item menggunakan
+        Transaction ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.TransactionItem'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaction_item berdasarkan Transaction ID
+      tags:
+      - transaction_items
   /transactions:
     get:
       consumes:

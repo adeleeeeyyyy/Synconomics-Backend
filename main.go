@@ -50,6 +50,8 @@ func main() {
 	routes.SetupProductRoutes(api)
 	routes.SetupBusinessRoutes(api)
 	routes.SetupTransactionRoutes(api)
+	routes.SetupTransactionItemRoutes(api)
+	routes.SetupExpenseRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
