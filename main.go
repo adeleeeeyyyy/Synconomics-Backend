@@ -46,6 +46,13 @@ func main() {
 
 	api := app.Group("/api")
 
+	api.Get("/health", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status":  "success",
+			"message": "API is up and running",
+		})
+	})
+
 	routes.SetupAuthRoutes(api)
 	routes.SetupProductRoutes(api)
 	routes.SetupBusinessRoutes(api)
