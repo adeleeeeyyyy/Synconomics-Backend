@@ -20,7 +20,6 @@ import (
 // @version 1.0
 // @description API for Synconomics, build with go
 // @termsOfService http://swagger.io/terms/
-// @host api-synconomics.synchronizeteams.com
 // @BasePath /api
 //
 // @securityDefinitions.apikey BearerAuth
@@ -50,6 +49,7 @@ func main() {
 	routes.SetupAuthRoutes(api)
 	routes.SetupProductRoutes(api)
 	routes.SetupBusinessRoutes(api)
+	routes.SetupTransactionRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

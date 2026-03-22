@@ -28,3 +28,11 @@ type BusinessService interface {
 	UpdateBusiness(business *models.Business) error
 	DeleteBusiness(id uint) error 
 }
+
+type TransactionService interface {
+	CreateTransaction(transaction *models.Transaction) error
+	GetAllTransactions() ([]models.Transaction, error)
+	GetTransactionById(id uint) (*models.Transaction, error)
+	UpdateTransaction(transaction *models.Transaction) error
+	DeleteTransaction(id uint) error 
+}

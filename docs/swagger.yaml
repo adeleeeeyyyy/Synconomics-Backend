@@ -1,7 +1,37 @@
 basePath: /api
 definitions:
-  fiber.Map:
-    additionalProperties: true
+  dto.CreateTransactionRequest:
+    properties:
+      business_id:
+        type: integer
+      payment_method:
+        type: string
+      status:
+        enum:
+        - pending
+        - completed
+        - cancelled
+        type: string
+      total_amount:
+        type: number
+    required:
+    - business_id
+    - payment_method
+    - status
+    - total_amount
+    type: object
+  dto.UpdateTransactionRequest:
+    properties:
+      payment_method:
+        type: string
+      status:
+        enum:
+        - pending
+        - completed
+        - cancelled
+        type: string
+      total_amount:
+        type: number
     type: object
   gorm.DeletedAt:
     properties:
@@ -530,7 +560,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-host: api-synconomics.synchronizeteams.com
 info:
   contact: {}
   description: API for Synconomics, build with go
@@ -570,15 +599,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
       summary: Login pengguna
       tags:
       - auth
@@ -591,15 +623,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
       security:
       - BearerAuth: []
       summary: Mendapatkan profil user yang sedang login
@@ -623,11 +658,13 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
         "400":
           description: invalid body request
           schema:
-            $ref: '#/definitions/fiber.Map'
+            additionalProperties: true
+            type: object
       summary: Register pengguna baru
       tags:
       - auth
@@ -1084,6 +1121,178 @@ paths:
       summary: Memperbarui parameter produk
       tags:
       - products
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data transaksi yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sukses mengambil data
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Transaction'
+                  type: array
+              type: object
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar transaksi
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data transaksi baru
+      parameters:
+      - description: Transaction Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat transaksi baru
+      tags:
+      - transactions
+  /transactions/{id}:
+    delete:
+      description: Menghapus transaksi dari database
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus transaksi
+      tags:
+      - transactions
+    get:
+      description: Mengambil informasi lengkap terkait satu transaksi menggunakan
+        ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom dari sebuah entitas transaksi
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data transaksi
+      tags:
+      - transactions
 securityDefinitions:
   BearerAuth:
     description: 'Type "Bearer " followed by your JSON Web Token. Example: "Bearer

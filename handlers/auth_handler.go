@@ -36,8 +36,8 @@ type LoginRequest struct {
 // @Accept json
 // @Produce json
 // @Param request body handlers.RegisterRequest true "Register Data"
-// @Success 201 {object} fiber.Map
-// @Failure 400 {object} fiber.Map "invalid body request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{} "invalid body request"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	req := new(RegisterRequest)
@@ -67,9 +67,9 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param request body handlers.LoginRequest true "Login Data"
-// @Success 200 {object} fiber.Map
-// @Failure 400 {object} fiber.Map
-// @Failure 401 {object} fiber.Map
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
@@ -117,9 +117,9 @@ func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
 // @Tags auth
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} fiber.Map
-// @Failure 401 {object} fiber.Map
-// @Failure 404 {object} fiber.Map
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
 // @Router /auth/profile [get]
 func (h *AuthHandler) Profile(c *fiber.Ctx) error {
 	userID, ok := c.Locals("userID").(uint)
