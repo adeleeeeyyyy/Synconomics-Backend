@@ -1,0 +1,1768 @@
+basePath: /api
+definitions:
+  dto.CreateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      business_id:
+        type: integer
+      category:
+        type: string
+      title:
+        type: string
+    required:
+    - amount
+    - business_id
+    - category
+    - title
+    type: object
+  dto.CreateTransactionItemRequest:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        minimum: 1
+        type: integer
+      transaction_id:
+        type: integer
+    required:
+    - price
+    - product_id
+    - quantity
+    - transaction_id
+    type: object
+  dto.CreateTransactionRequest:
+    properties:
+      business_id:
+        type: integer
+      payment_method:
+        type: string
+      status:
+        enum:
+        - pending
+        - completed
+        - cancelled
+        type: string
+      total_amount:
+        type: number
+    required:
+    - business_id
+    - payment_method
+    - status
+    - total_amount
+    type: object
+  dto.UpdateExpenseRequest:
+    properties:
+      amount:
+        type: number
+      category:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.UpdateTransactionItemRequest:
+    properties:
+      price:
+        type: number
+      quantity:
+        type: integer
+    type: object
+  dto.UpdateTransactionRequest:
+    properties:
+      payment_method:
+        type: string
+      status:
+        enum:
+        - pending
+        - completed
+        - cancelled
+        type: string
+      total_amount:
+        type: number
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  handlers.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handlers.RegisterRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  helpers.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  models.AIMessage:
+    properties:
+      aisession:
+        $ref: '#/definitions/models.AISession'
+      aisessionID:
+        type: integer
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      role:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.AIResult:
+    properties:
+      aisession:
+        $ref: '#/definitions/models.AISession'
+      aisessionID:
+        type: integer
+      createdAt:
+        type: string
+      data:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      result_type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.AISession:
+    properties:
+      aimessages:
+        items:
+          $ref: '#/definitions/models.AIMessage'
+        type: array
+      airesults:
+        items:
+          $ref: '#/definitions/models.AIResult'
+        type: array
+      business:
+        $ref: '#/definitions/models.Business'
+      businessID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      type:
+        $ref: '#/definitions/models.AISessionType'
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.AISessionType:
+    enum:
+    - idea_generation
+    - validation
+    - strategy
+    type: string
+    x-enum-varnames:
+    - IdeaGeneration
+    - Validation
+    - Strategy
+  models.Business:
+    properties:
+      address:
+        type: string
+      aisessions:
+        items:
+          $ref: '#/definitions/models.AISession'
+        type: array
+      businessMetrics:
+        items:
+          $ref: '#/definitions/models.BusinessMetric'
+        type: array
+      businessScores:
+        items:
+          $ref: '#/definitions/models.BusinessScore'
+        type: array
+      category:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      expenses:
+        items:
+          $ref: '#/definitions/models.Expense'
+        type: array
+      id:
+        type: integer
+      instagram:
+        type: string
+      latitude:
+        type: number
+      logo_url:
+        type: string
+      longitude:
+        type: number
+      name:
+        type: string
+      phone:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      supplyOffers:
+        items:
+          $ref: '#/definitions/models.SupplyOffer'
+        type: array
+      supplyRequests:
+        items:
+          $ref: '#/definitions/models.SupplyRequest'
+        type: array
+      tiktok:
+        type: string
+      transactions:
+        items:
+          $ref: '#/definitions/models.Transaction'
+        type: array
+      updatedAt:
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/models.User'
+        description: Foreign Key to User
+      userID:
+        type: integer
+      website:
+        type: string
+      whatsapp:
+        type: string
+    type: object
+  models.BusinessMetric:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      business_id:
+        type: integer
+      calculated_at:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  models.BusinessScore:
+    properties:
+      business_id:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      insight:
+        type: string
+      score:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Expense:
+    properties:
+      amount:
+        type: number
+      business:
+        $ref: '#/definitions/models.Business'
+      businessID:
+        type: integer
+      category:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.MatchStatus:
+    enum:
+    - pending
+    - accepted
+    - rejected
+    type: string
+    x-enum-varnames:
+    - StatusMatchPending
+    - StatusAccepted
+    - StatusRejected
+  models.Product:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      business_id:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+      supplyOffers:
+        items:
+          $ref: '#/definitions/models.SupplyOffer'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.ProductSearchLog:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      keyword:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.Reply:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      thread_id:
+        type: integer
+      updatedAt:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.SupplyMatch:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      offer_id:
+        type: integer
+      request_id:
+        type: integer
+      status:
+        $ref: '#/definitions/models.MatchStatus'
+      supply_offer:
+        $ref: '#/definitions/models.SupplyOffer'
+      supply_request:
+        $ref: '#/definitions/models.SupplyRequest'
+      updatedAt:
+        type: string
+    type: object
+  models.SupplyOffer:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      business_id:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/models.Product'
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      supplyMatches:
+        items:
+          $ref: '#/definitions/models.SupplyMatch'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.SupplyRequest:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      businessID:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        $ref: '#/definitions/models.SupplyRequestStatus'
+      supplyMatches:
+        items:
+          $ref: '#/definitions/models.SupplyMatch'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.SupplyRequestStatus:
+    enum:
+    - open
+    - matched
+    - closed
+    type: string
+    x-enum-varnames:
+    - StatusOpen
+    - StatusMatched
+    - StatusClosed
+  models.Thread:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      replies:
+        items:
+          $ref: '#/definitions/models.Reply'
+        type: array
+      title:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.Transaction:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      business_id:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      payment_method:
+        type: string
+      status:
+        $ref: '#/definitions/models.TransactionStatus'
+      total_amount:
+        type: number
+      transaction_date:
+        type: string
+      transactionItems:
+        items:
+          $ref: '#/definitions/models.TransactionItem'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  models.TransactionItem:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/models.Product'
+      productID:
+        type: integer
+      quantity:
+        type: integer
+      transaction:
+        $ref: '#/definitions/models.Transaction'
+      transactionID:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.TransactionStatus:
+    enum:
+    - pending
+    - completed
+    - cancelled
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusCompleted
+    - StatusCancelled
+  models.User:
+    properties:
+      aisessions:
+        items:
+          $ref: '#/definitions/models.AISession'
+        type: array
+      avatar:
+        type: string
+      business:
+        $ref: '#/definitions/models.Business'
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      google_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      productSearchLogs:
+        items:
+          $ref: '#/definitions/models.ProductSearchLog'
+        type: array
+      provider:
+        type: string
+      replies:
+        items:
+          $ref: '#/definitions/models.Reply'
+        type: array
+      threads:
+        items:
+          $ref: '#/definitions/models.Thread'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API for Synconomics, build with go
+  termsOfService: http://swagger.io/terms/
+  title: Synconomics API
+  version: "1.0"
+paths:
+  /auth/google:
+    get:
+      description: Redirect ke Google OAuth Login
+      responses: {}
+      summary: Memulai login Google
+      tags:
+      - auth
+  /auth/google/callback:
+    get:
+      description: Endpoint untuk menangani response dari Google
+      responses: {}
+      summary: Callback dari Google OAuth
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authentikasi user yang ada menghasilkan JWT token
+      parameters:
+      - description: Login Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login pengguna
+      tags:
+      - auth
+  /auth/profile:
+    get:
+      description: Mengembalikan data user berdasarkan token JWT
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan profil user yang sedang login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Mendaftarkan user baru menggunakan nama, email, dan password
+      parameters:
+      - description: Register Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: invalid body request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register pengguna baru
+      tags:
+      - auth
+  /business:
+    get:
+      description: Menampilkan daftar seluruh bisnis yang terdaftar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Business'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengambil semua data bisnis
+      tags:
+      - business
+    post:
+      consumes:
+      - multipart/form-data
+      description: Membuat entitas bisnis baru dengan data dan logo
+      parameters:
+      - description: Business Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Business Description
+        in: formData
+        name: description
+        type: string
+      - description: Business Category
+        in: formData
+        name: category
+        required: true
+        type: string
+      - description: Business Address
+        in: formData
+        name: address
+        type: string
+      - description: Latitude
+        in: formData
+        name: latitude
+        type: number
+      - description: Longitude
+        in: formData
+        name: longitude
+        type: number
+      - description: Phone Number
+        in: formData
+        name: phone
+        type: string
+      - description: WhatsApp
+        in: formData
+        name: whatsapp
+        type: string
+      - description: Instagram
+        in: formData
+        name: instagram
+        type: string
+      - description: Tiktok
+        in: formData
+        name: tiktok
+        type: string
+      - description: Website
+        in: formData
+        name: website
+        type: string
+      - description: Business Logo
+        in: formData
+        name: logo_url
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Business'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat profil bisnis baru
+      tags:
+      - business
+  /business/{id}:
+    delete:
+      description: Menghapus record dari ID entitas bisnis yang ditentukan
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus bisnis berdasarkan ID
+      tags:
+      - business
+    get:
+      description: Mendapatkan detil sebuah bisnis menggunakan path ID
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Business'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengambil data bisnis dengan ID
+      tags:
+      - business
+    put:
+      consumes:
+      - multipart/form-data
+      description: Mengubah sebagian atau seluruh data bisnis menggunakan ID beserta
+        opsional pembaruan logo
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Business Name
+        in: formData
+        name: name
+        type: string
+      - description: Business Description
+        in: formData
+        name: description
+        type: string
+      - description: Business Category
+        in: formData
+        name: category
+        type: string
+      - description: Business Address
+        in: formData
+        name: address
+        type: string
+      - description: Latitude
+        in: formData
+        name: latitude
+        type: number
+      - description: Longitude
+        in: formData
+        name: longitude
+        type: number
+      - description: Phone Number
+        in: formData
+        name: phone
+        type: string
+      - description: WhatsApp
+        in: formData
+        name: whatsapp
+        type: string
+      - description: Instagram
+        in: formData
+        name: instagram
+        type: string
+      - description: Tiktok
+        in: formData
+        name: tiktok
+        type: string
+      - description: Website
+        in: formData
+        name: website
+        type: string
+      - description: Business Logo (Optional)
+        in: formData
+        name: logo_url
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Business'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui bisnis yang sudah ada
+      tags:
+      - business
+  /expenses:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data expenses yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Expense'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar expenses
+      tags:
+      - expenses
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data entitas expense baru
+      parameters:
+      - description: Expense Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat expense baru
+      tags:
+      - expenses
+  /expenses/{id}:
+    delete:
+      description: Menghapus expense dari database
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus expense
+      tags:
+      - expenses
+    get:
+      description: Mengambil informasi lengkap terkait satu expense menggunakan ID
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail expense
+      tags:
+      - expenses
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom expense
+      parameters:
+      - description: Expense ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Expense Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateExpenseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Expense'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data expense
+      tags:
+      - expenses
+  /expenses/business/{id}:
+    get:
+      description: Mengambil kumpulan expense menggunakan Business ID
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Expense'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail expense berdasarkan Business ID
+      tags:
+      - expenses
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data produk yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sukses mengambil data
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Product'
+                  type: array
+              type: object
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      summary: ambil semua daftar produk
+      tags:
+      - products
+    post:
+      consumes:
+      - multipart/form-data
+      description: Menambahkan data entitas produk baru dan menyimpan path gambar
+      parameters:
+      - description: Product Name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Product Description
+        in: formData
+        name: description
+        type: string
+      - description: Price
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Stock
+        in: formData
+        name: stock
+        type: integer
+      - description: Product Image
+        in: formData
+        name: image_url
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat produk baru
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      description: Menghapus produk dari database
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus produk
+      tags:
+      - products
+    get:
+      description: Mengambil informasi lengkap terkait satu produk menggunakan ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail produk
+      tags:
+      - products
+    put:
+      consumes:
+      - multipart/form-data
+      description: Mengubah kolom dari sebuah entitas produk
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product Name
+        in: formData
+        name: name
+        type: string
+      - description: Product Description
+        in: formData
+        name: description
+        type: string
+      - description: Price
+        in: formData
+        name: price
+        type: number
+      - description: Stock
+        in: formData
+        name: stock
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui parameter produk
+      tags:
+      - products
+  /transaction_items:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data transaction_items yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.TransactionItem'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar transaction_items
+      tags:
+      - transaction_items
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data entitas transaction_item baru
+      parameters:
+      - description: Transaction Item Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionItemRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat transaction_item baru
+      tags:
+      - transaction_items
+  /transaction_items/{id}:
+    delete:
+      description: Menghapus transaction_item dari database
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus transaction_item
+      tags:
+      - transaction_items
+    get:
+      description: Mengambil informasi lengkap terkait satu transaction_item menggunakan
+        ID
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaction_item
+      tags:
+      - transaction_items
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom kuantitas dan harga dari sebuah entitas transaction_item
+      parameters:
+      - description: Transaction Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Item Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.TransactionItem'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data transaction_item
+      tags:
+      - transaction_items
+  /transaction_items/transaction/{id}:
+    get:
+      description: Mengambil informasi lengkap terkait kumpulan transaction_item menggunakan
+        Transaction ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.TransactionItem'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaction_item berdasarkan Transaction ID
+      tags:
+      - transaction_items
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: mengambil semua data transaksi yang ada
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sukses mengambil data
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Transaction'
+                  type: array
+              type: object
+        "500":
+          description: internal server error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: ambil semua daftar transaksi
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data transaksi baru
+      parameters:
+      - description: Transaction Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat transaksi baru
+      tags:
+      - transactions
+  /transactions/{id}:
+    delete:
+      description: Menghapus transaksi dari database
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Menghapus transaksi
+      tags:
+      - transactions
+    get:
+      description: Mengambil informasi lengkap terkait satu transaksi menggunakan
+        ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom dari sebuah entitas transaksi
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Transaction'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui data transaksi
+      tags:
+      - transactions
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer " followed by your JSON Web Token. Example: "Bearer
+      eyJhb..."'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

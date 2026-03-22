@@ -12,3 +12,45 @@ type AuthService interface {
 	HandleGoogleCallback(googleUser goth.User) (*models.User, string, error)
 	GetProfile(userID uint) (*models.User, string, error)
 }
+
+type ProductService interface {
+	CreateProduct(product *models.Product) error
+	GetAllProducts() ([]models.Product, error)
+	GetProductById(id uint) (*models.Product, error)
+	UpdateProduct(product *models.Product) error
+	DeleteProduct(id uint) error 
+}
+
+type BusinessService interface {
+	CreateBusiness(business *models.Business) error
+	GetAllBusinesses() ([]models.Business, error)
+	GetBusinessById(id uint) (*models.Business, error)
+	UpdateBusiness(business *models.Business) error
+	DeleteBusiness(id uint) error 
+}
+
+type TransactionService interface {
+	CreateTransaction(transaction *models.Transaction) error
+	GetAllTransactions() ([]models.Transaction, error)
+	GetTransactionById(id uint) (*models.Transaction, error)
+	UpdateTransaction(transaction *models.Transaction) error
+	DeleteTransaction(id uint) error 
+}
+
+type TransactionItemService interface {
+	CreateTransactionItem(item *models.TransactionItem) error
+	GetAllTransactionItems() ([]models.TransactionItem, error)
+	GetTransactionItemById(id uint) (*models.TransactionItem, error)
+	GetTransactionItemsByTransactionId(transactionID uint) ([]models.TransactionItem, error)
+	UpdateTransactionItem(item *models.TransactionItem) error
+	DeleteTransactionItem(id uint) error 
+}
+
+type ExpenseService interface {
+	CreateExpense(expense *models.Expense) error
+	GetAllExpenses() ([]models.Expense, error)
+	GetExpenseById(id uint) (*models.Expense, error)
+	GetExpensesByBusinessId(businessID uint) ([]models.Expense, error)
+	UpdateExpense(expense *models.Expense) error
+	DeleteExpense(id uint) error 
+}
