@@ -25,3 +25,11 @@ type BusinessRepository interface {
 	Update(business *models.Business) error
 	Delete(id uint) error
 }
+
+type TransactionRepository interface {
+	Create(transaction *models.Transaction) error
+	FindAll() ([]models.Transaction, error)
+	FindByID(id uint) (*models.Transaction, error)
+	Update(transaction *models.Transaction) error
+	Delete(id uint) error
+}
