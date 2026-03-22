@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"Synconomics/models"
 
@@ -29,6 +30,16 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("gagal connect database: ", err)
 	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal("gagal mendapatkan instance sql.DB: ", err)
+	}
+
+	// Setup Database Connection Pool
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	db.AutoMigrate(
 		&models.User{},
