@@ -52,6 +52,7 @@ func main() {
 	routes.SetupTransactionRoutes(api)
 	routes.SetupTransactionItemRoutes(api)
 	routes.SetupExpenseRoutes(api)
+	routes.SetupAIRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

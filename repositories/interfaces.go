@@ -51,3 +51,13 @@ type ExpenseRepository interface {
 	Update(expense *models.Expense) error
 	Delete(id uint) error
 }
+
+type AIRepository interface {
+	CreateSession(session *models.AISession) error
+	GetSessionByID(id uint) (*models.AISession, error)
+	GetSessionsByUserID(userID uint) ([]models.AISession, error)
+	SaveMessage(message *models.AIMessage) error
+	GetMessagesBySessionID(sessionID uint) ([]models.AIMessage, error)
+	SaveResult(result *models.AIResult) error
+	GetResultBySessionID(sessionID uint) (*models.AIResult, error)
+}

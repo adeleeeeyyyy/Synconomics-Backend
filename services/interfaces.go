@@ -54,3 +54,11 @@ type ExpenseService interface {
 	UpdateExpense(expense *models.Expense) error
 	DeleteExpense(id uint) error 
 }
+
+type AIService interface {
+	CreateSession(userID, businessID uint, sessionType string) (*models.AISession, error)
+	Chat(sessionID uint, userMessage string) (*models.AIMessage, error)
+	FinalizeSessionResult(sessionID uint) (*models.AIResult, error)
+	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
+	GetSessionResult(sessionID uint) (*models.AIResult, error)
+}

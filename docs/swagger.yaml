@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  dto.ChatRequest:
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
   dto.CreateExpenseRequest:
     properties:
       amount:
@@ -15,6 +22,20 @@ definitions:
     - business_id
     - category
     - title
+    type: object
+  dto.CreateSessionRequest:
+    properties:
+      business_id:
+        type: integer
+      type:
+        enum:
+        - idea_generation
+        - validation
+        - strategy
+        type: string
+    required:
+    - business_id
+    - type
     type: object
   dto.CreateTransactionItemRequest:
     properties:
@@ -616,6 +637,133 @@ info:
   title: Synconomics API
   version: "1.0"
 paths:
+  /ai/sessions:
+    post:
+      consumes:
+      - application/json
+      description: Menyimpan topik dan inisialisasi session AI
+      parameters:
+      - description: Create Session Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat sesi AI chat baru
+      tags:
+      - ai
+  /ai/sessions/{id}/chat:
+    post:
+      consumes:
+      - application/json
+      description: Membalas pesan prompt user berdasarkan konteks session
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengirim pesan ke Gemini AI
+      tags:
+      - ai
+  /ai/sessions/{id}/messages:
+    get:
+      description: Mendapatkan seluruh log AIMessage berdasarkan Session ID
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengambil riwayat chat
+      tags:
+      - ai
+  /ai/sessions/{id}/result:
+    post:
+      description: Menutup sesi dan merangkum prompt di json AIResult
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengkalkulasi resume percakapan chat session
+      tags:
+      - ai
   /auth/google:
     get:
       description: Redirect ke Google OAuth Login
