@@ -10,9 +10,13 @@ import (
 )
 
 func SetupProductRoutes(api fiber.Router) {
+	businessRepo := repositories.NewBusinessRepository(config.DB)
+	businessService := services.NewBusinessService(businessRepo)
+
 	productRepo := repositories.NewProductRepository(config.DB)
 	productService := services.NewProductService(productRepo)
-	productHandler := handlers.NewProductHandler(productService)
+
+	productHandler := handlers.NewProductHandler(productService, businessService)
 
 	products := api.Group("/products")
 
@@ -20,6 +24,7 @@ func SetupProductRoutes(api fiber.Router) {
 
 	products.Post("/", productHandler.CreateProduct)
 	products.Get("/", productHandler.GetProducts)
+	products.Get("/business/:businessId", productHandler.GetProductsByBusiness)
 	products.Get("/:id", productHandler.GetProduct)
 	products.Put("/:id", productHandler.UpdateProduct)
 	products.Delete("/:id", productHandler.DeleteProduct)

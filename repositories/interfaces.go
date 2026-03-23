@@ -16,6 +16,7 @@ type ProductRepository interface {
 	FindByID(id uint) (*models.Product, error)
 	Update(product *models.Product) error
 	Delete(id uint) error
+	FindByBusinessID(businessID uint) ([]models.Product, error)
 }
 
 type BusinessRepository interface {
@@ -24,6 +25,7 @@ type BusinessRepository interface {
 	FindByID(id uint) (*models.Business, error)
 	Update(business *models.Business) error
 	Delete(id uint) error
+	FindByUserID(userID uint) ([]models.Business, error)
 }
 
 type TransactionRepository interface {

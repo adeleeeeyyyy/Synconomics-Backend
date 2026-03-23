@@ -47,7 +47,10 @@ func (h *ProductSearchLogHandler) CreateLog(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "search log created", log)
+	var resp dto.ProductSearchLogResponse
+	copier.Copy(&resp, &log)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "search log created", resp)
 }
 
 // GetLogs
@@ -56,7 +59,7 @@ func (h *ProductSearchLogHandler) CreateLog(c *fiber.Ctx) error {
 // @Tags product_search_logs
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.ProductSearchLog}
+// @Success 200 {object} helpers.Response{data=[]dto.ProductSearchLogResponse}
 // @Router /product-search-logs [get]
 func (h *ProductSearchLogHandler) GetLogs(c *fiber.Ctx) error {
 	logs, err := h.service.GetAllLogs()
@@ -64,7 +67,10 @@ func (h *ProductSearchLogHandler) GetLogs(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "search logs fetched", logs)
+	var resp []dto.ProductSearchLogResponse
+	copier.Copy(&resp, &logs)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "search logs fetched", resp)
 }
 
 // GetLog
@@ -74,7 +80,7 @@ func (h *ProductSearchLogHandler) GetLogs(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Log ID"
-// @Success 200 {object} helpers.Response{data=models.ProductSearchLog}
+// @Success 200 {object} helpers.Response{data=dto.ProductSearchLogResponse}
 // @Router /product-search-logs/{id} [get]
 func (h *ProductSearchLogHandler) GetLog(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -87,7 +93,10 @@ func (h *ProductSearchLogHandler) GetLog(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "search log not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "search log fetched", log)
+	var resp dto.ProductSearchLogResponse
+	copier.Copy(&resp, log)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "search log fetched", resp)
 }
 
 // GetUserLogs
@@ -96,7 +105,7 @@ func (h *ProductSearchLogHandler) GetLog(c *fiber.Ctx) error {
 // @Tags product_search_logs
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.ProductSearchLog}
+// @Success 200 {object} helpers.Response{data=[]dto.ProductSearchLogResponse}
 // @Router /product-search-logs/me [get]
 func (h *ProductSearchLogHandler) GetUserLogs(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uint)
@@ -106,5 +115,8 @@ func (h *ProductSearchLogHandler) GetUserLogs(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "user search logs fetched", logs)
+	var resp []dto.ProductSearchLogResponse
+	copier.Copy(&resp, &logs)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "user search logs fetched", resp)
 }

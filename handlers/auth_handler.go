@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"Synconomics/dto"
+	"Synconomics/pkg/helpers"
 	"Synconomics/services"
 	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
+	"github.com/jinzhu/copier"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -36,27 +39,25 @@ type LoginRequest struct {
 // @Accept json
 // @Produce json
 // @Param request body handlers.RegisterRequest true "Register Data"
-// @Success 201 {object} map[string]interface{}
-// @Failure 400 {object} map[string]interface{} "invalid body request"
+// @Success 201 {object} helpers.Response{data=dto.UserResponse}
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	req := new(RegisterRequest)
 	if err := c.BodyParser(req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": "invalid body request",
-		})
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid body request")
 	}
 
 	user, token, err := h.authService.Register(req.Name, req.Email, req.Password)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	return c.Status(201).JSON(fiber.Map{
+	var userResp dto.UserResponse
+	copier.Copy(&userResp, user)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "registration success", fiber.Map{
 		"token": token,
-		"user":  user,
+		"user":  userResp,
 	})
 }
 
@@ -67,28 +68,25 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param request body handlers.LoginRequest true "Login Data"
-// @Success 200 {object} map[string]interface{}
-// @Failure 400 {object} map[string]interface{}
-// @Failure 401 {object} map[string]interface{}
+// @Success 200 {object} helpers.Response{data=dto.UserResponse}
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
 	if err := c.BodyParser(req); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"error": "invalid body request",
-		})
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid body request")
 	}
 
 	user, token, err := h.authService.Login(req.Email, req.Password)
 	if err != nil {
-		return c.Status(401).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "invalid credentials")
 	}
 
-	return c.JSON(fiber.Map{
+	var userResp dto.UserResponse
+	copier.Copy(&userResp, user)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "login success", fiber.Map{
 		"token": token,
-		"user":  user,
+		"user":  userResp,
 	})
 }
 
@@ -117,24 +115,25 @@ func (h *AuthHandler) GoogleLogin(c *fiber.Ctx) error {
 // @Tags auth
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} map[string]interface{}
-// @Failure 401 {object} map[string]interface{}
-// @Failure 404 {object} map[string]interface{}
+// @Success 200 {object} helpers.Response{data=dto.UserResponse}
 // @Router /auth/profile [get]
 func (h *AuthHandler) Profile(c *fiber.Ctx) error {
 	userID, ok := c.Locals("userID").(uint)
 	if !ok {
-		return c.Status(401).JSON(fiber.Map{"error": "unauthorized"})
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "unauthorized")
 	}
 
 	user, token, err := h.authService.GetProfile(userID)
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "user not found"})
+		return helpers.ErrorResponse(c, fiber.StatusNotFound, "user not found")
 	}
 
-	return c.JSON(fiber.Map{
+	var userResp dto.UserResponse
+	copier.Copy(&userResp, user)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "profile fetched", fiber.Map{
 		"token": token,
-		"user":  user,
+		"user":  userResp,
 	})
 }
 

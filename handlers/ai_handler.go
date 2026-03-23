@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/jinzhu/copier"
 )
 
 type AIHandler struct {
@@ -26,9 +27,7 @@ func NewAIHandler(service services.AIService) *AIHandler {
 // @Produce json
 // @Security BearerAuth
 // @Param request body dto.CreateSessionRequest true "Create Session Request"
-// @Success 201 {object} helpers.Response
-// @Failure 400 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 201 {object} helpers.Response{data=dto.AISessionResponse}
 // @Router /ai/sessions [post]
 func (h *AIHandler) CreateSession(c *fiber.Ctx) error {
 	userID, ok := c.Locals("userID").(uint)
@@ -46,7 +45,10 @@ func (h *AIHandler) CreateSession(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "ai session created", session)
+	var resp dto.AISessionResponse
+	copier.Copy(&resp, session)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "ai session created", resp)
 }
 
 // Chat
@@ -58,9 +60,7 @@ func (h *AIHandler) CreateSession(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Session ID"
 // @Param request body dto.ChatRequest true "Chat Request"
-// @Success 200 {object} helpers.Response
-// @Failure 400 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.AIMessageResponse}
 // @Router /ai/sessions/{id}/chat [post]
 func (h *AIHandler) Chat(c *fiber.Ctx) error {
 	sessionID, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -78,7 +78,10 @@ func (h *AIHandler) Chat(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", reply)
+	var resp dto.AIMessageResponse
+	copier.Copy(&resp, reply)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", resp)
 }
 
 // GetMessages
@@ -88,9 +91,7 @@ func (h *AIHandler) Chat(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Session ID"
-// @Success 200 {object} helpers.Response
-// @Failure 400 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=[]dto.AIMessageResponse}
 // @Router /ai/sessions/{id}/messages [get]
 func (h *AIHandler) GetMessages(c *fiber.Ctx) error {
 	sessionID, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -103,7 +104,10 @@ func (h *AIHandler) GetMessages(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "messages fetched", messages)
+	var resp []dto.AIMessageResponse
+	copier.Copy(&resp, &messages)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "messages fetched", resp)
 }
 
 // FinalizeResult
@@ -113,9 +117,7 @@ func (h *AIHandler) GetMessages(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Session ID"
-// @Success 200 {object} helpers.Response
-// @Failure 400 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.AIResultResponse}
 // @Router /ai/sessions/{id}/result [post]
 func (h *AIHandler) FinalizeResult(c *fiber.Ctx) error {
 	sessionID, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -128,7 +130,10 @@ func (h *AIHandler) FinalizeResult(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "session finalized", result)
+	var resp dto.AIResultResponse
+	copier.Copy(&resp, result)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "session finalized", resp)
 }
 
 // ChatIdeaGeneration
@@ -167,7 +172,7 @@ func (h *AIHandler) ChatValidation(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param request body dto.ChatWithRoleRequest true "Chat Request"
-// @Success 200 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.AIMessageResponse}
 // @Router /ai/chat/strategy [post]
 func (h *AIHandler) ChatStrategy(c *fiber.Ctx) error {
 	return h.chatByRole(c, string(models.Strategy))
@@ -189,5 +194,8 @@ func (h *AIHandler) chatByRole(c *fiber.Ctx, sessionType string) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", reply)
+	var resp dto.AIMessageResponse
+	copier.Copy(&resp, reply)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", resp)
 }

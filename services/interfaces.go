@@ -18,7 +18,8 @@ type ProductService interface {
 	GetAllProducts() ([]models.Product, error)
 	GetProductById(id uint) (*models.Product, error)
 	UpdateProduct(product *models.Product) error
-	DeleteProduct(id uint) error 
+	DeleteProduct(id uint) error
+	GetProductsByBusinessId(businessID uint) ([]models.Product, error)
 }
 
 type BusinessService interface {
@@ -26,7 +27,8 @@ type BusinessService interface {
 	GetAllBusinesses() ([]models.Business, error)
 	GetBusinessById(id uint) (*models.Business, error)
 	UpdateBusiness(business *models.Business) error
-	DeleteBusiness(id uint) error 
+	DeleteBusiness(id uint) error
+	GetBusinessesByUserId(userID uint) ([]models.Business, error)
 }
 
 type TransactionService interface {

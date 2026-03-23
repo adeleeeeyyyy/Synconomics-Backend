@@ -32,3 +32,7 @@ func (s *productService) UpdateProduct(product *models.Product) error {
 func (s *productService) DeleteProduct(id uint) error {
 	return s.repo.Delete(id)
 }
+
+func (s *productService) GetProductsByBusinessId(businessID uint) ([]models.Product, error) {
+	return s.repo.FindByBusinessID(businessID)
+}

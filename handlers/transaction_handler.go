@@ -49,7 +49,10 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "transaction created", newTransaction)
+	var resp dto.TransactionResponse
+	copier.Copy(&resp, &newTransaction)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "transaction created", resp)
 }
 
 // GetTransactions
@@ -59,7 +62,7 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.Transaction} "Sukses mengambil data"
+// @Success 200 {object} helpers.Response{data=[]dto.TransactionResponse} "Sukses mengambil data"
 // @Failure 500 {object} helpers.Response "internal server error"
 // @Router /transactions [get]
 func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
@@ -68,7 +71,10 @@ func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "transactions fetched", transactions)
+	var resp []dto.TransactionResponse
+	copier.Copy(&resp, &transactions)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "transactions fetched", resp)
 }
 
 // GetTransaction
@@ -78,9 +84,7 @@ func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Transaction ID"
-// @Success 200 {object} helpers.Response{data=models.Transaction}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.TransactionResponse}
 // @Router /transactions/{id} [get]
 func (h *TransactionHandler) GetTransaction(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -93,7 +97,10 @@ func (h *TransactionHandler) GetTransaction(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "transaction not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "transaction fetched", transaction)
+	var resp dto.TransactionResponse
+	copier.Copy(&resp, transaction)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "transaction fetched", resp)
 }
 
 // UpdateTransaction
@@ -105,10 +112,7 @@ func (h *TransactionHandler) GetTransaction(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Transaction ID"
 // @Param request body dto.UpdateTransactionRequest true "Transaction Update Request"
-// @Success 200 {object} helpers.Response{data=models.Transaction}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.TransactionResponse}
 // @Router /transactions/{id} [put]
 func (h *TransactionHandler) UpdateTransaction(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -134,7 +138,10 @@ func (h *TransactionHandler) UpdateTransaction(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "transaction updated", existingTransaction)
+	var resp dto.TransactionResponse
+	copier.Copy(&resp, existingTransaction)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "transaction updated", resp)
 }
 
 // DeleteTransaction

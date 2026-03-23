@@ -47,7 +47,10 @@ func (h *ThreadHandler) CreateThread(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "thread created", thread)
+	var resp dto.ThreadResponse
+	copier.Copy(&resp, &thread)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "thread created", resp)
 }
 
 // GetThreads
@@ -56,7 +59,7 @@ func (h *ThreadHandler) CreateThread(c *fiber.Ctx) error {
 // @Tags threads
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.Thread}
+// @Success 200 {object} helpers.Response{data=[]dto.ThreadResponse}
 // @Router /threads [get]
 func (h *ThreadHandler) GetThreads(c *fiber.Ctx) error {
 	threads, err := h.service.GetAllThreads()
@@ -64,7 +67,10 @@ func (h *ThreadHandler) GetThreads(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "threads fetched", threads)
+	var resp []dto.ThreadResponse
+	copier.Copy(&resp, &threads)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "threads fetched", resp)
 }
 
 // GetThread
@@ -74,7 +80,7 @@ func (h *ThreadHandler) GetThreads(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Thread ID"
-// @Success 200 {object} helpers.Response{data=models.Thread}
+// @Success 200 {object} helpers.Response{data=dto.ThreadResponse}
 // @Router /threads/{id} [get]
 func (h *ThreadHandler) GetThread(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -87,7 +93,10 @@ func (h *ThreadHandler) GetThread(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "thread not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "thread fetched", thread)
+	var resp dto.ThreadResponse
+	copier.Copy(&resp, thread)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "thread fetched", resp)
 }
 
 // UpdateThread
@@ -99,7 +108,7 @@ func (h *ThreadHandler) GetThread(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Thread ID"
 // @Param request body dto.UpdateThreadReq true "Update Request Body"
-// @Success 200 {object} helpers.Response{data=models.Thread}
+// @Success 200 {object} helpers.Response{data=dto.ThreadResponse}
 // @Router /threads/{id} [put]
 func (h *ThreadHandler) UpdateThread(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -125,7 +134,10 @@ func (h *ThreadHandler) UpdateThread(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "thread updated", thread)
+	var resp dto.ThreadResponse
+	copier.Copy(&resp, thread)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "thread updated", resp)
 }
 
 // DeleteThread

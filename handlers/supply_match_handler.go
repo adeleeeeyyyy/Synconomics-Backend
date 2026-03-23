@@ -46,7 +46,10 @@ func (h *SupplyMatchHandler) CreateSupplyMatch(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "supply match created", match)
+	var resp dto.SupplyMatchResponse
+	copier.Copy(&resp, &match)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "supply match created", resp)
 }
 
 // GetSupplyMatches
@@ -55,7 +58,7 @@ func (h *SupplyMatchHandler) CreateSupplyMatch(c *fiber.Ctx) error {
 // @Tags supply_matches
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.SupplyMatch}
+// @Success 200 {object} helpers.Response{data=[]dto.SupplyMatchResponse}
 // @Failure 500 {object} helpers.Response
 // @Router /supply-matches [get]
 func (h *SupplyMatchHandler) GetSupplyMatches(c *fiber.Ctx) error {
@@ -64,7 +67,10 @@ func (h *SupplyMatchHandler) GetSupplyMatches(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply matches fetched", matches)
+	var resp []dto.SupplyMatchResponse
+	copier.Copy(&resp, &matches)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply matches fetched", resp)
 }
 
 // GetSupplyMatch
@@ -74,9 +80,7 @@ func (h *SupplyMatchHandler) GetSupplyMatches(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Supply Match ID"
-// @Success 200 {object} helpers.Response{data=models.SupplyMatch}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.SupplyMatchResponse}
 // @Router /supply-matches/{id} [get]
 func (h *SupplyMatchHandler) GetSupplyMatch(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -89,7 +93,10 @@ func (h *SupplyMatchHandler) GetSupplyMatch(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "supply match not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply match fetched", match)
+	var resp dto.SupplyMatchResponse
+	copier.Copy(&resp, match)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply match fetched", resp)
 }
 
 // UpdateSupplyMatchStatus
@@ -101,10 +108,7 @@ func (h *SupplyMatchHandler) GetSupplyMatch(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Supply Match ID"
 // @Param request body dto.UpdateSupplyMatchStatusReq true "Update Status Body"
-// @Success 200 {object} helpers.Response{data=models.SupplyMatch}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.SupplyMatchResponse}
 // @Router /supply-matches/{id}/status [patch]
 func (h *SupplyMatchHandler) UpdateSupplyMatchStatus(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -128,7 +132,10 @@ func (h *SupplyMatchHandler) UpdateSupplyMatchStatus(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply match status updated", match)
+	var resp dto.SupplyMatchResponse
+	copier.Copy(&resp, match)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply match status updated", resp)
 }
 
 // DeleteSupplyMatch

@@ -46,7 +46,10 @@ func (h *ExpenseHandler) CreateExpense(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "expense created", newExpense)
+	var resp dto.ExpenseResponse
+	copier.Copy(&resp, &newExpense)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "expense created", resp)
 }
 
 // GetExpenses
@@ -56,7 +59,7 @@ func (h *ExpenseHandler) CreateExpense(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.Expense}
+// @Success 200 {object} helpers.Response{data=[]dto.ExpenseResponse}
 // @Failure 500 {object} helpers.Response
 // @Router /expenses [get]
 func (h *ExpenseHandler) GetExpenses(c *fiber.Ctx) error {
@@ -65,7 +68,10 @@ func (h *ExpenseHandler) GetExpenses(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "expenses fetched", expenses)
+	var resp []dto.ExpenseResponse
+	copier.Copy(&resp, &expenses)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "expenses fetched", resp)
 }
 
 // GetExpense
@@ -75,9 +81,7 @@ func (h *ExpenseHandler) GetExpenses(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Expense ID"
-// @Success 200 {object} helpers.Response{data=models.Expense}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.ExpenseResponse}
 // @Router /expenses/{id} [get]
 func (h *ExpenseHandler) GetExpense(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -90,7 +94,10 @@ func (h *ExpenseHandler) GetExpense(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "expense not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "expense fetched", expense)
+	var resp dto.ExpenseResponse
+	copier.Copy(&resp, expense)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "expense fetched", resp)
 }
 
 // GetExpensesByBusinessId
@@ -100,9 +107,7 @@ func (h *ExpenseHandler) GetExpense(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Business ID"
-// @Success 200 {object} helpers.Response{data=[]models.Expense}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=[]dto.ExpenseResponse}
 // @Router /expenses/business/{id} [get]
 func (h *ExpenseHandler) GetExpensesByBusinessId(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -115,7 +120,10 @@ func (h *ExpenseHandler) GetExpensesByBusinessId(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "expenses not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "expenses fetched", expenses)
+	var resp []dto.ExpenseResponse
+	copier.Copy(&resp, &expenses)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "expenses fetched", resp)
 }
 
 // UpdateExpense
@@ -127,10 +135,7 @@ func (h *ExpenseHandler) GetExpensesByBusinessId(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Expense ID"
 // @Param request body dto.UpdateExpenseRequest true "Expense Update Request"
-// @Success 200 {object} helpers.Response{data=models.Expense}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.ExpenseResponse}
 // @Router /expenses/{id} [put]
 func (h *ExpenseHandler) UpdateExpense(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -156,7 +161,10 @@ func (h *ExpenseHandler) UpdateExpense(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "expense updated", existingExpense)
+	var resp dto.ExpenseResponse
+	copier.Copy(&resp, existingExpense)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "expense updated", resp)
 }
 
 // DeleteExpense

@@ -42,6 +42,11 @@ func (m *MockBusinessRepository) Delete(id uint) error {
 	return args.Error(0)
 }
 
+func (m *MockBusinessRepository) FindByUserID(userID uint) ([]models.Business, error) {
+	args := m.Called(userID)
+	return args.Get(0).([]models.Business), args.Error(1)
+}
+
 // ---------------------------------------------
 // Test Functions for BusinessService
 // ---------------------------------------------
@@ -117,5 +122,23 @@ func TestDeleteBusiness_Success(t *testing.T) {
 	err := service.DeleteBusiness(1)
 
 	assert.NoError(t, err)
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetBusinessesByUserId_Success(t *testing.T) {
+	mockRepo := new(MockBusinessRepository)
+	service := NewBusinessService(mockRepo)
+
+	expectedBusinesses := []models.Business{
+		{Name: "Toko Sinar Jaya", UserID: 1},
+	}
+
+	mockRepo.On("FindByUserID", uint(1)).Return(expectedBusinesses, nil)
+
+	result, err := service.GetBusinessesByUserId(1)
+
+	assert.NoError(t, err)
+	assert.Len(t, result, 1)
+	assert.Equal(t, uint(1), result[0].UserID)
 	mockRepo.AssertExpectations(t)
 }

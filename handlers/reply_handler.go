@@ -47,7 +47,10 @@ func (h *ReplyHandler) CreateReply(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "reply created", reply)
+	var resp dto.ReplyResponse
+	copier.Copy(&resp, &reply)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "reply created", resp)
 }
 
 // GetRepliesByThread
@@ -57,7 +60,7 @@ func (h *ReplyHandler) CreateReply(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param threadId path int true "Thread ID"
-// @Success 200 {object} helpers.Response{data=[]models.Reply}
+// @Success 200 {object} helpers.Response{data=[]dto.ReplyResponse}
 // @Router /replies/thread/{threadId} [get]
 func (h *ReplyHandler) GetRepliesByThread(c *fiber.Ctx) error {
 	threadId, err := strconv.ParseUint(c.Params("threadId"), 10, 32)
@@ -70,7 +73,10 @@ func (h *ReplyHandler) GetRepliesByThread(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "replies fetched", replies)
+	var resp []dto.ReplyResponse
+	copier.Copy(&resp, &replies)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "replies fetched", resp)
 }
 
 // UpdateReply
@@ -82,7 +88,7 @@ func (h *ReplyHandler) GetRepliesByThread(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Reply ID"
 // @Param request body dto.UpdateReplyReq true "Update Request Body"
-// @Success 200 {object} helpers.Response{data=models.Reply}
+// @Success 200 {object} helpers.Response{data=dto.ReplyResponse}
 // @Router /replies/{id} [put]
 func (h *ReplyHandler) UpdateReply(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -108,7 +114,10 @@ func (h *ReplyHandler) UpdateReply(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "reply updated", reply)
+	var resp dto.ReplyResponse
+	copier.Copy(&resp, reply)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "reply updated", resp)
 }
 
 // DeleteReply

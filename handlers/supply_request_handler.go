@@ -46,7 +46,10 @@ func (h *SupplyRequestHandler) CreateSupplyRequest(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "supply request created", request)
+	var resp dto.SupplyRequestResponse
+	copier.Copy(&resp, &request)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "supply request created", resp)
 }
 
 // GetSupplyRequests
@@ -55,7 +58,7 @@ func (h *SupplyRequestHandler) CreateSupplyRequest(c *fiber.Ctx) error {
 // @Tags supply_requests
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.SupplyRequest}
+// @Success 200 {object} helpers.Response{data=[]dto.SupplyRequestResponse}
 // @Failure 500 {object} helpers.Response
 // @Router /supply-requests [get]
 func (h *SupplyRequestHandler) GetSupplyRequests(c *fiber.Ctx) error {
@@ -64,7 +67,10 @@ func (h *SupplyRequestHandler) GetSupplyRequests(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply requests fetched", requests)
+	var resp []dto.SupplyRequestResponse
+	copier.Copy(&resp, &requests)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply requests fetched", resp)
 }
 
 // GetSupplyRequest
@@ -74,9 +80,7 @@ func (h *SupplyRequestHandler) GetSupplyRequests(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Supply Request ID"
-// @Success 200 {object} helpers.Response{data=models.SupplyRequest}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.SupplyRequestResponse}
 // @Router /supply-requests/{id} [get]
 func (h *SupplyRequestHandler) GetSupplyRequest(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -89,7 +93,10 @@ func (h *SupplyRequestHandler) GetSupplyRequest(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "supply request not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply request fetched", request)
+	var resp dto.SupplyRequestResponse
+	copier.Copy(&resp, request)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply request fetched", resp)
 }
 
 // GetSupplyRequestsByBusinessId
@@ -99,9 +106,7 @@ func (h *SupplyRequestHandler) GetSupplyRequest(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Business ID"
-// @Success 200 {object} helpers.Response{data=[]models.SupplyRequest}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=[]dto.SupplyRequestResponse}
 // @Router /supply-requests/business/{id} [get]
 func (h *SupplyRequestHandler) GetSupplyRequestsByBusinessId(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -114,7 +119,10 @@ func (h *SupplyRequestHandler) GetSupplyRequestsByBusinessId(c *fiber.Ctx) error
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "supply requests not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply requests fetched", requests)
+	var resp []dto.SupplyRequestResponse
+	copier.Copy(&resp, &requests)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply requests fetched", resp)
 }
 
 // UpdateSupplyRequest
@@ -126,10 +134,7 @@ func (h *SupplyRequestHandler) GetSupplyRequestsByBusinessId(c *fiber.Ctx) error
 // @Security BearerAuth
 // @Param id path int true "Supply Request ID"
 // @Param request body dto.UpdateSupplyRequestReq true "Update Request Body"
-// @Success 200 {object} helpers.Response{data=models.SupplyRequest}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.SupplyRequestResponse}
 // @Router /supply-requests/{id} [put]
 func (h *SupplyRequestHandler) UpdateSupplyRequest(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -155,7 +160,10 @@ func (h *SupplyRequestHandler) UpdateSupplyRequest(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "supply request updated", existingReq)
+	var resp dto.SupplyRequestResponse
+	copier.Copy(&resp, existingReq)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "supply request updated", resp)
 }
 
 // DeleteSupplyRequest

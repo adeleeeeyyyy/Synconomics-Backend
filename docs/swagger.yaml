@@ -1,5 +1,69 @@
 basePath: /api
 definitions:
+  dto.AIMessageResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      session_id:
+        type: integer
+    type: object
+  dto.AIResultResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      result:
+        type: string
+      session_id:
+        type: integer
+    type: object
+  dto.AISessionResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      type:
+        type: string
+    type: object
+  dto.BusinessResponse:
+    properties:
+      address:
+        type: string
+      category:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      instagram:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      name:
+        type: string
+      phone:
+        type: string
+      tiktok:
+        type: string
+      user_id:
+        type: integer
+      website:
+        type: string
+      whatsapp:
+        type: string
+    type: object
   dto.ChatRequest:
     properties:
       message:
@@ -164,6 +228,145 @@ definitions:
     - status
     - total_amount
     type: object
+  dto.ExpenseResponse:
+    properties:
+      amount:
+        type: number
+      business_id:
+        type: integer
+      category:
+        type: string
+      description:
+        type: string
+      expense_date:
+        type: string
+      id:
+        type: integer
+    type: object
+  dto.ProductResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.ProductSearchLogResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      keyword:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.ReplyResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      thread_id:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+      user_id:
+        type: integer
+    type: object
+  dto.SupplyMatchResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      supply_offer_id:
+        type: integer
+      supply_request_id:
+        type: integer
+    type: object
+  dto.SupplyOfferResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  dto.SupplyRequestResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  dto.ThreadResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+      user_id:
+        type: integer
+    type: object
+  dto.TransactionResponse:
+    properties:
+      business_id:
+        type: integer
+      id:
+        type: integer
+      total_amount:
+        type: number
+      transaction_date:
+        type: string
+      type:
+        type: string
+    type: object
   dto.UpdateExpenseRequest:
     properties:
       amount:
@@ -239,6 +442,19 @@ definitions:
         type: string
       total_amount:
         type: number
+    type: object
+  dto.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      google_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   gorm.DeletedAt:
     properties:
@@ -816,7 +1032,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/helpers.Response'
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIMessageResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Chat khusus Business Strategy
@@ -865,15 +1086,12 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/helpers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AISessionResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Membuat sesi AI chat baru
@@ -902,15 +1120,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/helpers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIMessageResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Mengirim pesan ke Gemini AI
@@ -931,15 +1146,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/helpers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.AIMessageResponse'
+                  type: array
+              type: object
       security:
       - BearerAuth: []
       summary: Mengambil riwayat chat
@@ -960,15 +1174,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/helpers.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIResultResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Mengkalkulasi resume percakapan chat session
@@ -1006,18 +1217,12 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       summary: Login pengguna
       tags:
       - auth
@@ -1030,18 +1235,12 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Mendapatkan profil user yang sedang login
@@ -1065,13 +1264,12 @@ paths:
         "201":
           description: Created
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: invalid body request
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       summary: Register pengguna baru
       tags:
       - auth
@@ -1089,7 +1287,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Business'
+                    $ref: '#/definitions/dto.BusinessResponse'
                   type: array
               type: object
         "500":
@@ -1229,7 +1427,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Business'
+                  $ref: '#/definitions/dto.BusinessResponse'
               type: object
         "400":
           description: Bad Request
@@ -1313,7 +1511,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Business'
+                  $ref: '#/definitions/dto.BusinessResponse'
               type: object
         "400":
           description: Bad Request
@@ -1332,6 +1530,33 @@ paths:
       summary: Memperbarui bisnis yang sudah ada
       tags:
       - business
+  /business/me:
+    get:
+      description: Mendapatkan daftar bisnis yang dimiliki oleh user yang sedang login
+        (berdasarkan ID dari JWT)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengambil bisnis milik user login
+      tags:
+      - business
   /expenses:
     get:
       consumes:
@@ -1348,7 +1573,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Expense'
+                    $ref: '#/definitions/dto.ExpenseResponse'
                   type: array
               type: object
         "500":
@@ -1443,16 +1668,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Expense'
+                  $ref: '#/definitions/dto.ExpenseResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail expense
@@ -1484,20 +1701,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Expense'
+                  $ref: '#/definitions/dto.ExpenseResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui data expense
@@ -1523,17 +1728,9 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Expense'
+                    $ref: '#/definitions/dto.ExpenseResponse'
                   type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail expense berdasarkan Business ID
@@ -1553,7 +1750,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.ProductSearchLog'
+                    $ref: '#/definitions/dto.ProductSearchLogResponse'
                   type: array
               type: object
       security:
@@ -1608,7 +1805,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.ProductSearchLog'
+                  $ref: '#/definitions/dto.ProductSearchLogResponse'
               type: object
       security:
       - BearerAuth: []
@@ -1629,7 +1826,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.ProductSearchLog'
+                    $ref: '#/definitions/dto.ProductSearchLogResponse'
                   type: array
               type: object
       security:
@@ -1653,7 +1850,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Product'
+                    $ref: '#/definitions/dto.ProductResponse'
                   type: array
               type: object
         "500":
@@ -1701,7 +1898,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
               type: object
         "400":
           description: Bad Request
@@ -1763,16 +1960,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail produk
@@ -1814,23 +2003,39 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui parameter produk
+      tags:
+      - products
+  /products/business/{businessId}:
+    get:
+      description: Mengambil semua data produk milik sebuah bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan daftar produk dalam satu bisnis
       tags:
       - products
   /replies:
@@ -1909,7 +2114,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Reply'
+                  $ref: '#/definitions/dto.ReplyResponse'
               type: object
       security:
       - BearerAuth: []
@@ -1936,7 +2141,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Reply'
+                    $ref: '#/definitions/dto.ReplyResponse'
                   type: array
               type: object
       security:
@@ -1958,7 +2163,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.SupplyMatch'
+                    $ref: '#/definitions/dto.SupplyMatchResponse'
                   type: array
               type: object
         "500":
@@ -2053,16 +2258,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyMatch'
+                  $ref: '#/definitions/dto.SupplyMatchResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Detail Supply Match
@@ -2095,20 +2292,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyMatch'
+                  $ref: '#/definitions/dto.SupplyMatchResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Update status Supply Match
@@ -2128,7 +2313,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.SupplyOffer'
+                    $ref: '#/definitions/dto.SupplyOfferResponse'
                   type: array
               type: object
         "500":
@@ -2223,16 +2408,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyOffer'
+                  $ref: '#/definitions/dto.SupplyOfferResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Detail Supply Offer
@@ -2264,20 +2441,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyOffer'
+                  $ref: '#/definitions/dto.SupplyOfferResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui Supply Offer
@@ -2303,17 +2468,9 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.SupplyOffer'
+                    $ref: '#/definitions/dto.SupplyOfferResponse'
                   type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Supply Offer berdasarkan Business
@@ -2333,7 +2490,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.SupplyRequest'
+                    $ref: '#/definitions/dto.SupplyRequestResponse'
                   type: array
               type: object
         "500":
@@ -2428,16 +2585,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyRequest'
+                  $ref: '#/definitions/dto.SupplyRequestResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Detail Supply Request
@@ -2469,20 +2618,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SupplyRequest'
+                  $ref: '#/definitions/dto.SupplyRequestResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui Supply Request
@@ -2508,17 +2645,9 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.SupplyRequest'
+                    $ref: '#/definitions/dto.SupplyRequestResponse'
                   type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Supply Request berdasarkan Business
@@ -2538,7 +2667,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Thread'
+                    $ref: '#/definitions/dto.ThreadResponse'
                   type: array
               type: object
       security:
@@ -2613,7 +2742,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Thread'
+                  $ref: '#/definitions/dto.ThreadResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2646,7 +2775,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Thread'
+                  $ref: '#/definitions/dto.ThreadResponse'
               type: object
       security:
       - BearerAuth: []
@@ -2878,7 +3007,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Transaction'
+                    $ref: '#/definitions/dto.TransactionResponse'
                   type: array
               type: object
         "500":
@@ -2974,16 +3103,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Transaction'
+                  $ref: '#/definitions/dto.TransactionResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail transaksi
@@ -3015,20 +3136,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Transaction'
+                  $ref: '#/definitions/dto.TransactionResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui data transaksi
