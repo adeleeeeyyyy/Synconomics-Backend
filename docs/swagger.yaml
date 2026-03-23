@@ -33,6 +33,13 @@ definitions:
     - category
     - title
     type: object
+  dto.CreateProductSearchLogReq:
+    properties:
+      keyword:
+        type: string
+    required:
+    - keyword
+    type: object
   dto.CreateReplyReq:
     properties:
       content:
@@ -1532,6 +1539,104 @@ paths:
       summary: Mendapatkan detail expense berdasarkan Business ID
       tags:
       - expenses
+  /product-search-logs:
+    get:
+      description: Mengambil semua data log pencarian produk
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ProductSearchLog'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Log Pencarian
+      tags:
+      - product_search_logs
+    post:
+      consumes:
+      - application/json
+      description: Menyimpan kata kunci pencarian yang dilakukan user
+      parameters:
+      - description: Log Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductSearchLogReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductSearchLog'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Log Pencarian Produk
+      tags:
+      - product_search_logs
+  /product-search-logs/{id}:
+    get:
+      description: Mengambil informasi log pencarian menggunakan ID
+      parameters:
+      - description: Log ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductSearchLog'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Log Pencarian
+      tags:
+      - product_search_logs
+  /product-search-logs/me:
+    get:
+      description: Mengambil semua data log pencarian milik user yang sedang login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ProductSearchLog'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar Log Pencarian milik User
+      tags:
+      - product_search_logs
   /products:
     get:
       consumes:
