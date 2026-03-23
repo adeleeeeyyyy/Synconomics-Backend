@@ -61,6 +61,7 @@ type AIService interface {
 	FinalizeSessionResult(sessionID uint) (*models.AIResult, error)
 	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
 	GetSessionResult(sessionID uint) (*models.AIResult, error)
+	ChatByRole(userID, businessID uint, sessionType string, message string) (*models.AIMessage, error)
 }
 
 type SupplyRequestService interface {
@@ -70,4 +71,47 @@ type SupplyRequestService interface {
 	GetSupplyRequestsByBusinessId(businessID uint) ([]models.SupplyRequest, error)
 	UpdateSupplyRequest(req *models.SupplyRequest) error
 	DeleteSupplyRequest(id uint) error
+}
+
+type SupplyOfferService interface {
+	CreateSupplyOffer(offer *models.SupplyOffer) error
+	GetAllSupplyOffers() ([]models.SupplyOffer, error)
+	GetSupplyOfferById(id uint) (*models.SupplyOffer, error)
+	GetSupplyOffersByBusinessId(businessID uint) ([]models.SupplyOffer, error)
+	UpdateSupplyOffer(offer *models.SupplyOffer) error
+	DeleteSupplyOffer(id uint) error
+}
+
+type SupplyMatchService interface {
+	CreateSupplyMatch(match *models.SupplyMatch) error
+	GetAllSupplyMatches() ([]models.SupplyMatch, error)
+	GetSupplyMatchById(id uint) (*models.SupplyMatch, error)
+	GetSupplyMatchesByRequestId(requestID uint) ([]models.SupplyMatch, error)
+	GetSupplyMatchesByOfferId(offerID uint) ([]models.SupplyMatch, error)
+	UpdateSupplyMatch(match *models.SupplyMatch) error
+	DeleteSupplyMatch(id uint) error
+}
+
+type ThreadService interface {
+	CreateThread(thread *models.Thread) error
+	GetAllThreads() ([]models.Thread, error)
+	GetThreadById(id uint) (*models.Thread, error)
+	UpdateThread(thread *models.Thread) error
+	DeleteThread(id uint) error
+}
+
+type ReplyService interface {
+	CreateReply(reply *models.Reply) error
+	GetAllReplies() ([]models.Reply, error)
+	GetReplyById(id uint) (*models.Reply, error)
+	GetRepliesByThreadId(threadID uint) ([]models.Reply, error)
+	UpdateReply(reply *models.Reply) error
+	DeleteReply(id uint) error
+}
+
+type ProductSearchLogService interface {
+	CreateLog(log *models.ProductSearchLog) error
+	GetAllLogs() ([]models.ProductSearchLog, error)
+	GetLogById(id uint) (*models.ProductSearchLog, error)
+	GetLogsByUserId(userID uint) ([]models.ProductSearchLog, error)
 }

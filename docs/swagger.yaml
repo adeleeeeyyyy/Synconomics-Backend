@@ -7,6 +7,16 @@ definitions:
     required:
     - message
     type: object
+  dto.ChatWithRoleRequest:
+    properties:
+      business_id:
+        type: integer
+      message:
+        type: string
+    required:
+    - business_id
+    - message
+    type: object
   dto.CreateExpenseRequest:
     properties:
       amount:
@@ -23,6 +33,16 @@ definitions:
     - category
     - title
     type: object
+  dto.CreateReplyReq:
+    properties:
+      content:
+        type: string
+      thread_id:
+        type: integer
+    required:
+    - content
+    - thread_id
+    type: object
   dto.CreateSessionRequest:
     properties:
       business_id:
@@ -36,6 +56,38 @@ definitions:
     required:
     - business_id
     - type
+    type: object
+  dto.CreateSupplyMatchReq:
+    properties:
+      status:
+        enum:
+        - pending
+        - accepted
+        - rejected
+        type: string
+      supply_offer_id:
+        type: integer
+      supply_request_id:
+        type: integer
+    required:
+    - supply_offer_id
+    - supply_request_id
+    type: object
+  dto.CreateSupplyOfferReq:
+    properties:
+      business_id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - business_id
+    - product_name
+    - quantity
     type: object
   dto.CreateSupplyRequestReq:
     properties:
@@ -57,6 +109,16 @@ definitions:
     - product_name
     - quantity
     - status
+    type: object
+  dto.CreateThreadReq:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
+    - title
     type: object
   dto.CreateTransactionItemRequest:
     properties:
@@ -104,6 +166,33 @@ definitions:
       title:
         type: string
     type: object
+  dto.UpdateReplyReq:
+    properties:
+      content:
+        type: string
+    required:
+    - content
+    type: object
+  dto.UpdateSupplyMatchStatusReq:
+    properties:
+      status:
+        enum:
+        - pending
+        - accepted
+        - rejected
+        type: string
+    required:
+    - status
+    type: object
+  dto.UpdateSupplyOfferReq:
+    properties:
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+    type: object
   dto.UpdateSupplyRequestReq:
     properties:
       product_name:
@@ -115,6 +204,13 @@ definitions:
         - open
         - matched
         - closed
+        type: string
+    type: object
+  dto.UpdateThreadReq:
+    properties:
+      content:
+        type: string
+      title:
         type: string
     type: object
   dto.UpdateTransactionItemRequest:
@@ -671,6 +767,79 @@ info:
   title: Synconomics API
   version: "1.0"
 paths:
+  /ai/chat/idea-generation:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Idea Generation (otomatis session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Idea Generation
+      tags:
+      - ai
+  /ai/chat/strategy:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Business Strategy (otomatis session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Business Strategy
+      tags:
+      - ai
+  /ai/chat/validation:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Business Validation (otomatis
+        session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Business Validation
+      tags:
+      - ai
   /ai/sessions:
     post:
       consumes:
@@ -1559,6 +1728,492 @@ paths:
       summary: Memperbarui parameter produk
       tags:
       - products
+  /replies:
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data balasan pada thread
+      parameters:
+      - description: Reply Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateReplyReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Reply'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Reply baru
+      tags:
+      - replies
+  /replies/{id}:
+    delete:
+      description: Menghapus balasan
+      parameters:
+      - description: Reply ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Reply
+      tags:
+      - replies
+    put:
+      consumes:
+      - application/json
+      description: Mengubah isi balasan
+      parameters:
+      - description: Reply ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateReplyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Reply'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Reply
+      tags:
+      - replies
+  /replies/thread/{threadId}:
+    get:
+      description: Mengambil semua data balasan milik satu thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: threadId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Reply'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar balasan di Thread
+      tags:
+      - replies
+  /supply-matches:
+    get:
+      description: Mengambil semua data supply match
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.SupplyMatch'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Match
+      tags:
+      - supply_matches
+    post:
+      consumes:
+      - application/json
+      description: Menghubungkan supply request dengan supply offer
+      parameters:
+      - description: Supply Match Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyMatchReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyMatch'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat Supply Match
+      tags:
+      - supply_matches
+  /supply-matches/{id}:
+    delete:
+      description: Menghapus data supply match
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Match
+      tags:
+      - supply_matches
+    get:
+      description: Mengambil informasi supply match menggunakan ID
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyMatch'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Match
+      tags:
+      - supply_matches
+  /supply-matches/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Mengubah status (accepted/rejected) supply match
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Status Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyMatchStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyMatch'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Update status Supply Match
+      tags:
+      - supply_matches
+  /supply-offers:
+    get:
+      description: Mengambil semua data supply offer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.SupplyOffer'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Offer
+      tags:
+      - supply_offers
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data penawaran supply baru
+      parameters:
+      - description: Supply Offer Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyOfferReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyOffer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat Supply Offer
+      tags:
+      - supply_offers
+  /supply-offers/{id}:
+    delete:
+      description: Menghapus penawaran supply
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Offer
+      tags:
+      - supply_offers
+    get:
+      description: Mengambil informasi supply offer menggunakan ID
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyOffer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Offer
+      tags:
+      - supply_offers
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada supply offer
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyOfferReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyOffer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Supply Offer
+      tags:
+      - supply_offers
+  /supply-offers/business/{id}:
+    get:
+      description: Mengambil penawaran supply milik satu bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.SupplyOffer'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Supply Offer berdasarkan Business
+      tags:
+      - supply_offers
   /supply-requests:
     get:
       description: Mengambil semua data supply request
@@ -1764,6 +2419,135 @@ paths:
       summary: Supply Request berdasarkan Business
       tags:
       - supply_requests
+  /threads:
+    get:
+      description: Mengambil semua data thread
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Thread'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Thread
+      tags:
+      - threads
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data diskusi/thread baru
+      parameters:
+      - description: Thread Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateThreadReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Thread'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Thread baru
+      tags:
+      - threads
+  /threads/{id}:
+    delete:
+      description: Menghapus thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Thread
+      tags:
+      - threads
+    get:
+      description: Mengambil informasi thread menggunakan ID
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Thread'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Thread
+      tags:
+      - threads
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateThreadReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Thread'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Thread
+      tags:
+      - threads
   /transaction_items:
     get:
       consumes:

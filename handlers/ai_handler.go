@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Synconomics/dto"
+	"Synconomics/models"
 	"Synconomics/pkg/helpers"
 	"Synconomics/services"
 	"strconv"
@@ -128,4 +129,65 @@ func (h *AIHandler) FinalizeResult(c *fiber.Ctx) error {
 	}
 
 	return helpers.SuccessResponse(c, fiber.StatusOK, "session finalized", result)
+}
+
+// ChatIdeaGeneration
+// @Summary Chat khusus Idea Generation
+// @Description Mengirim pesan ke AI dengan role Idea Generation (otomatis session)
+// @Tags ai
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.ChatWithRoleRequest true "Chat Request"
+// @Success 200 {object} helpers.Response
+// @Router /ai/chat/idea-generation [post]
+func (h *AIHandler) ChatIdeaGeneration(c *fiber.Ctx) error {
+	return h.chatByRole(c, string(models.IdeaGeneration))
+}
+
+// ChatValidation
+// @Summary Chat khusus Business Validation
+// @Description Mengirim pesan ke AI dengan role Business Validation (otomatis session)
+// @Tags ai
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.ChatWithRoleRequest true "Chat Request"
+// @Success 200 {object} helpers.Response
+// @Router /ai/chat/validation [post]
+func (h *AIHandler) ChatValidation(c *fiber.Ctx) error {
+	return h.chatByRole(c, string(models.Validation))
+}
+
+// ChatStrategy
+// @Summary Chat khusus Business Strategy
+// @Description Mengirim pesan ke AI dengan role Business Strategy (otomatis session)
+// @Tags ai
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.ChatWithRoleRequest true "Chat Request"
+// @Success 200 {object} helpers.Response
+// @Router /ai/chat/strategy [post]
+func (h *AIHandler) ChatStrategy(c *fiber.Ctx) error {
+	return h.chatByRole(c, string(models.Strategy))
+}
+
+func (h *AIHandler) chatByRole(c *fiber.Ctx, sessionType string) error {
+	userID, ok := c.Locals("userID").(uint)
+	if !ok {
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	var req dto.ChatWithRoleRequest
+	if err := c.BodyParser(&req); err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid request body")
+	}
+
+	reply, err := h.service.ChatByRole(userID, req.BusinessID, sessionType, req.Message)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", reply)
 }

@@ -61,6 +61,11 @@ func main() {
 	routes.SetupExpenseRoutes(api)
 	routes.SetupAIRoutes(api)
 	routes.SetupSupplyRequestRoutes(api)
+	routes.SetupSupplyOfferRoutes(api)
+	routes.SetupSupplyMatchRoutes(api)
+	routes.SetupThreadRoutes(api)
+	routes.SetupReplyRoutes(api)
+	routes.SetupProductSearchLogRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

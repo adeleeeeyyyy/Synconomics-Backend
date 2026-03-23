@@ -165,3 +165,16 @@ func (s *aiService) GetSessionMessages(sessionID uint) ([]models.AIMessage, erro
 func (s *aiService) GetSessionResult(sessionID uint) (*models.AIResult, error) {
 	return s.repo.GetResultBySessionID(sessionID)
 }
+
+func (s *aiService) ChatByRole(userID, businessID uint, sessionType string, message string) (*models.AIMessage, error) {
+	session, err := s.repo.GetLatestSession(userID, businessID, models.AISessionType(sessionType))
+	if err != nil {
+		// Create new session if not found
+		session, err = s.CreateSession(userID, businessID, sessionType)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return s.Chat(session.ID, message)
+}

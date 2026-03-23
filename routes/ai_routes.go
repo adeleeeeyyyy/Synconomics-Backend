@@ -23,4 +23,9 @@ func SetupAIRoutes(api fiber.Router) {
 	aiRoutes.Post("/sessions/:id/chat", aiHandler.Chat)
 	aiRoutes.Get("/sessions/:id/messages", aiHandler.GetMessages)
 	aiRoutes.Post("/sessions/:id/result", aiHandler.FinalizeResult)
+
+	// New role-specific chat endpoints
+	aiRoutes.Post("/chat/idea-generation", aiHandler.ChatIdeaGeneration)
+	aiRoutes.Post("/chat/validation", aiHandler.ChatValidation)
+	aiRoutes.Post("/chat/strategy", aiHandler.ChatStrategy)
 }

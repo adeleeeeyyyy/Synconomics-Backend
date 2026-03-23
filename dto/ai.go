@@ -10,3 +10,9 @@ type CreateSessionRequest struct {
 type ChatRequest struct {
 	Message string `json:"message" validate:"required"`
 }
+
+// ChatWithRoleRequest mendefinisikan payload untuk chat dengan role tertentu tanpa session_id di URL
+type ChatWithRoleRequest struct {
+	BusinessID uint   `json:"business_id" validate:"required"`
+	Message    string `json:"message" validate:"required"`
+}

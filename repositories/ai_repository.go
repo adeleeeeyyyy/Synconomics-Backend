@@ -49,3 +49,9 @@ func (r *aiRepository) GetResultBySessionID(sessionID uint) (*models.AIResult, e
 	err := r.db.Where("ai_session_id = ?", sessionID).First(&result).Error
 	return &result, err
 }
+
+func (r *aiRepository) GetLatestSession(userID, businessID uint, sessionType models.AISessionType) (*models.AISession, error) {
+	var session models.AISession
+	err := r.db.Where("user_id = ? AND business_id = ? AND type = ?", userID, businessID, sessionType).Order("created_at desc").First(&session).Error
+	return &session, err
+}

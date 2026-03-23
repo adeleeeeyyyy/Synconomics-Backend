@@ -54,6 +54,14 @@ func (m *MockAIRepository) GetResultBySessionID(sessionID uint) (*models.AIResul
 	return nil, args.Error(1)
 }
 
+func (m *MockAIRepository) GetLatestSession(userID, businessID uint, sessionType models.AISessionType) (*models.AISession, error) {
+	args := m.Called(userID, businessID, sessionType)
+	if args.Get(0) != nil {
+		return args.Get(0).(*models.AISession), args.Error(1)
+	}
+	return nil, args.Error(1)
+}
+
 func TestCreateSession_Success(t *testing.T) {
 	mockRepo := new(MockAIRepository)
 	service := NewAIService(mockRepo)

@@ -60,6 +60,7 @@ type AIRepository interface {
 	GetMessagesBySessionID(sessionID uint) ([]models.AIMessage, error)
 	SaveResult(result *models.AIResult) error
 	GetResultBySessionID(sessionID uint) (*models.AIResult, error)
+	GetLatestSession(userID, businessID uint, sessionType models.AISessionType) (*models.AISession, error)
 }
 
 type SupplyRequestRepository interface {
@@ -69,4 +70,47 @@ type SupplyRequestRepository interface {
 	FindByBusinessID(businessID uint) ([]models.SupplyRequest, error)
 	Update(req *models.SupplyRequest) error
 	Delete(id uint) error
+}
+
+type SupplyOfferRepository interface {
+	Create(offer *models.SupplyOffer) error
+	FindAll() ([]models.SupplyOffer, error)
+	FindByID(id uint) (*models.SupplyOffer, error)
+	FindByBusinessID(businessID uint) ([]models.SupplyOffer, error)
+	Update(offer *models.SupplyOffer) error
+	Delete(id uint) error
+}
+
+type SupplyMatchRepository interface {
+	Create(match *models.SupplyMatch) error
+	FindAll() ([]models.SupplyMatch, error)
+	FindByID(id uint) (*models.SupplyMatch, error)
+	FindByRequestID(requestID uint) ([]models.SupplyMatch, error)
+	FindByOfferID(offerID uint) ([]models.SupplyMatch, error)
+	Update(match *models.SupplyMatch) error
+	Delete(id uint) error
+}
+
+type ThreadRepository interface {
+	Create(thread *models.Thread) error
+	FindAll() ([]models.Thread, error)
+	FindByID(id uint) (*models.Thread, error)
+	Update(thread *models.Thread) error
+	Delete(id uint) error
+}
+
+type ReplyRepository interface {
+	Create(reply *models.Reply) error
+	FindAll() ([]models.Reply, error)
+	FindByID(id uint) (*models.Reply, error)
+	FindByThreadID(threadID uint) ([]models.Reply, error)
+	Update(reply *models.Reply) error
+	Delete(id uint) error
+}
+
+type ProductSearchLogRepository interface {
+	Create(log *models.ProductSearchLog) error
+	FindAll() ([]models.ProductSearchLog, error)
+	FindByID(id uint) (*models.ProductSearchLog, error)
+	FindByUserID(userID uint) ([]models.ProductSearchLog, error)
 }
