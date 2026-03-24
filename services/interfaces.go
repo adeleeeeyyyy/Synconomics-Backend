@@ -138,3 +138,13 @@ type BusinessMetricService interface {
 	DeleteMetric(id uint) error
 	GetLatestMetricByBusinessId(businessID uint) (*models.BusinessMetric, error)
 }
+
+type BusinessScoreService interface {
+	CreateScore(score *models.BusinessScore) error
+	GetAllScores() ([]models.BusinessScore, error)
+	GetScoreById(id uint) (*models.BusinessScore, error)
+	GetScoresByBusinessId(businessID uint) ([]models.BusinessScore, error)
+	UpdateScore(score *models.BusinessScore) error
+	DeleteScore(id uint) error
+	GetLatestScoreByBusinessId(businessID uint) (*models.BusinessScore, error)
+}

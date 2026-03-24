@@ -136,3 +136,13 @@ type BusinessMetricRepository interface {
 	Delete(id uint) error
 	GetLatestByBusinessID(businessID uint) (*models.BusinessMetric, error)
 }
+
+type BusinessScoreRepository interface {
+	Create(score *models.BusinessScore) error
+	FindAll() ([]models.BusinessScore, error)
+	FindByID(id uint) (*models.BusinessScore, error)
+	FindByBusinessID(businessID uint) ([]models.BusinessScore, error)
+	Update(score *models.BusinessScore) error
+	Delete(id uint) error
+	GetLatestByBusinessID(businessID uint) (*models.BusinessScore, error)
+}

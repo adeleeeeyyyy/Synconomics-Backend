@@ -786,7 +786,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.BusinessMetric"
+                                                "$ref": "#/definitions/dto.BusinessMetricResponse"
                                             }
                                         }
                                     }
@@ -842,7 +842,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.BusinessMetric"
+                                            "$ref": "#/definitions/dto.BusinessMetricResponse"
                                         }
                                     }
                                 }
@@ -902,7 +902,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/models.BusinessMetric"
+                                                "$ref": "#/definitions/dto.BusinessMetricResponse"
                                             }
                                         }
                                     }
@@ -955,7 +955,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.BusinessMetric"
+                                            "$ref": "#/definitions/dto.BusinessMetricResponse"
                                         }
                                     }
                                 }
@@ -1007,7 +1007,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.BusinessMetric"
+                                            "$ref": "#/definitions/dto.BusinessMetricResponse"
                                         }
                                     }
                                 }
@@ -1075,7 +1075,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.BusinessMetric"
+                                            "$ref": "#/definitions/dto.BusinessMetricResponse"
                                         }
                                     }
                                 }
@@ -1114,6 +1114,384 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Metric ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/business-scores": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetch all business score records",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "List all Business Scores",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new business score record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Create Business Score",
+                "parameters": [
+                    {
+                        "description": "Business Score Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateBusinessScoreRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/business-scores/business/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetch business scores for a specific business",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Business Scores by Business ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/business-scores/business/{id}/latest": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetch the most recent business score for a business",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Latest Business Score",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/business-scores/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetch a business score record by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Detail Business Score",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Score ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update fields of a business score record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Update Business Score",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Score ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateBusinessScoreRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.BusinessScoreResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove a business score record",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "business_scores"
+                ],
+                "summary": "Delete Business Score",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Score ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -4540,6 +4918,41 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.BusinessMetricResponse": {
+            "type": "object",
+            "properties": {
+                "business": {
+                    "$ref": "#/definitions/models.Business"
+                },
+                "business_id": {
+                    "type": "integer"
+                },
+                "calculated_at": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "net_profit": {
+                    "type": "number"
+                },
+                "sales_growth": {
+                    "type": "number"
+                },
+                "stock_turnover": {
+                    "type": "number"
+                },
+                "total_expense": {
+                    "type": "number"
+                },
+                "total_revenue": {
+                    "type": "number"
+                }
+            }
+        },
         "dto.BusinessResponse": {
             "type": "object",
             "properties": {
@@ -4581,6 +4994,26 @@ const docTemplate = `{
                 },
                 "whatsapp": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.BusinessScoreResponse": {
+            "type": "object",
+            "properties": {
+                "business_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "insight": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },
@@ -4636,6 +5069,24 @@ const docTemplate = `{
                 },
                 "total_revenue": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.CreateBusinessScoreRequest": {
+            "type": "object",
+            "required": [
+                "business_id",
+                "score"
+            ],
+            "properties": {
+                "business_id": {
+                    "type": "integer"
+                },
+                "insight": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },
@@ -5126,6 +5577,17 @@ const docTemplate = `{
                 },
                 "total_revenue": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.UpdateBusinessScoreRequest": {
+            "type": "object",
+            "properties": {
+                "insight": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
                 }
             }
         },

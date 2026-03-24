@@ -68,6 +68,7 @@ func main() {
 	routes.SetupProductSearchLogRoutes(api)
 	routes.SetupMarketTrendRoutes(api)
 	routes.SetupBusinessMetricRoutes(api)
+	routes.SetupBusinessScoreRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
