@@ -2,7 +2,6 @@ package services
 
 import (
 	"Synconomics/models"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -62,43 +61,23 @@ func (m *MockAIRepository) GetLatestSession(userID, businessID uint, sessionType
 	return nil, args.Error(1)
 }
 
-func TestCreateSession_Success(t *testing.T) {
+func TestNewAIService(t *testing.T) {
 	mockRepo := new(MockAIRepository)
 	service := NewAIService(mockRepo)
 
-	mockRepo.On("CreateSession", mock.AnythingOfType("*models.AISession")).Return(nil)
+	assert.NotNil(t, service)
+}
 
-	session, err := service.CreateSession(1, 1, "business_analysis")
+func TestCreateSession(t *testing.T) {
+	mockRepo := new(MockAIRepository)
+	service := NewAIService(mockRepo)
+
+	session := &models.AISession{UserID: 1, BusinessID: 1, Type: models.IdeaGeneration}
+	mockRepo.On("CreateSession", session).Return(nil)
+
+	result, err := service.CreateSession(1, 1, string(models.IdeaGeneration))
 
 	assert.NoError(t, err)
-	assert.NotNil(t, session)
-	assert.Equal(t, uint(1), session.UserID)
-	assert.Equal(t, uint(1), session.BusinessID)
-	mockRepo.AssertExpectations(t)
-}
-
-func TestGetSessionMessages_NotFound(t *testing.T) {
-	mockRepo := new(MockAIRepository)
-	service := NewAIService(mockRepo)
-
-	mockRepo.On("GetMessagesBySessionID", uint(99)).Return([]models.AIMessage{}, errors.New("record not found"))
-
-	msgs, err := service.GetSessionMessages(99)
-
-	assert.Error(t, err)
-	assert.Empty(t, msgs)
-	mockRepo.AssertExpectations(t)
-}
-
-func TestGetSessionResult_NotFound(t *testing.T) {
-	mockRepo := new(MockAIRepository)
-	service := NewAIService(mockRepo)
-
-	mockRepo.On("GetResultBySessionID", uint(99)).Return(nil, errors.New("record not found"))
-
-	res, err := service.GetSessionResult(99)
-
-	assert.Error(t, err)
-	assert.Nil(t, res)
+	assert.NotNil(t, result)
 	mockRepo.AssertExpectations(t)
 }

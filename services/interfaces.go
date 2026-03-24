@@ -11,6 +11,7 @@ type AuthService interface {
 	Login(email, password string) (*models.User, string, error)
 	HandleGoogleCallback(googleUser goth.User) (*models.User, string, error)
 	GetProfile(userID uint) (*models.User, string, error)
+	UpdateProfile(userID uint, name, email string) (*models.User, error)
 }
 
 type ProductService interface {
@@ -37,6 +38,7 @@ type TransactionService interface {
 	GetTransactionById(id uint) (*models.Transaction, error)
 	UpdateTransaction(transaction *models.Transaction) error
 	DeleteTransaction(id uint) error 
+	GetTransactionsByBusinessId(businessID uint) ([]models.Transaction, error)
 }
 
 type TransactionItemService interface {
@@ -59,11 +61,11 @@ type ExpenseService interface {
 
 type AIService interface {
 	CreateSession(userID, businessID uint, sessionType string) (*models.AISession, error)
-	Chat(sessionID uint, userMessage string) (*models.AIMessage, error)
+	Chat(sessionID uint, userMessage string, token string) (*models.AIMessage, error)
 	FinalizeSessionResult(sessionID uint) (*models.AIResult, error)
 	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
 	GetSessionResult(sessionID uint) (*models.AIResult, error)
-	ChatByRole(userID, businessID uint, sessionType string, message string) (*models.AIMessage, error)
+	ChatByRole(userID, businessID uint, sessionType string, message string, token string) (*models.AIMessage, error)
 }
 
 type SupplyRequestService interface {
@@ -116,4 +118,13 @@ type ProductSearchLogService interface {
 	GetAllLogs() ([]models.ProductSearchLog, error)
 	GetLogById(id uint) (*models.ProductSearchLog, error)
 	GetLogsByUserId(userID uint) ([]models.ProductSearchLog, error)
+}
+
+type MarketTrendService interface {
+	CreateTrend(trend *models.MarketTrend) error
+	GetAllTrends() ([]models.MarketTrend, error)
+	GetTrendById(id uint) (*models.MarketTrend, error)
+	UpdateTrend(trend *models.MarketTrend) error
+	DeleteTrend(id uint) error
+	GetTopTenTrends() ([]models.MarketTrend, error)
 }

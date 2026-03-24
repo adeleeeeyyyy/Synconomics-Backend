@@ -41,6 +41,11 @@ func (m *MockTransactionRepository) Delete(id uint) error {
 	return args.Error(0)
 }
 
+func (m *MockTransactionRepository) FindByBusinessID(businessID uint) ([]models.Transaction, error) {
+	args := m.Called(businessID)
+	return args.Get(0).([]models.Transaction), args.Error(1)
+}
+
 func TestCreateTransaction_Success(t *testing.T) {
 	mockRepo := new(MockTransactionRepository)
 	service := NewTransactionService(mockRepo)
@@ -86,5 +91,23 @@ func TestGetTransactionByID_NotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Equal(t, expectedErr, err)
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetTransactionsByBusinessId_Success(t *testing.T) {
+	mockRepo := new(MockTransactionRepository)
+	service := NewTransactionService(mockRepo)
+
+	expectedTxs := []models.Transaction{
+		{TotalAmount: 150000, BusinessID: 1},
+	}
+
+	mockRepo.On("FindByBusinessID", uint(1)).Return(expectedTxs, nil)
+
+	result, err := service.GetTransactionsByBusinessId(1)
+
+	assert.NoError(t, err)
+	assert.Len(t, result, 1)
+	assert.Equal(t, float64(150000), result[0].TotalAmount)
 	mockRepo.AssertExpectations(t)
 }

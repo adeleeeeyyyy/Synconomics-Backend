@@ -97,6 +97,19 @@ definitions:
     - category
     - title
     type: object
+  dto.CreateMarketTrendRequest:
+    properties:
+      demand_score:
+        type: number
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
+        type: integer
+    required:
+    - product_name
+    type: object
   dto.CreateProductSearchLogReq:
     properties:
       keyword:
@@ -236,11 +249,26 @@ definitions:
         type: integer
       category:
         type: string
-      description:
-        type: string
       expense_date:
         type: string
       id:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.MarketTrendResponse:
+    properties:
+      created_at:
+        type: string
+      demand_score:
+        type: number
+      id:
+        type: integer
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
         type: integer
     type: object
   dto.ProductResponse:
@@ -376,6 +404,17 @@ definitions:
       title:
         type: string
     type: object
+  dto.UpdateMarketTrendRequest:
+    properties:
+      demand_score:
+        type: number
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
+        type: integer
+    type: object
   dto.UpdateReplyReq:
     properties:
       content:
@@ -442,6 +481,15 @@ definitions:
         type: string
       total_amount:
         type: number
+    type: object
+  dto.UserBusinessResponse:
+    properties:
+      businesses:
+        items:
+          $ref: '#/definitions/dto.BusinessResponse'
+        type: array
+      user:
+        $ref: '#/definitions/dto.UserResponse'
     type: object
   dto.UserResponse:
     properties:
@@ -1226,6 +1274,27 @@ paths:
       summary: Login pengguna
       tags:
       - auth
+  /auth/me-with-businesses:
+    get:
+      description: Mengembalikan data user dan semua bisnis yang dimilikinya berdasarkan
+        token JWT
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserBusinessResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan profil user dan daftar bisnisnya
+      tags:
+      - auth
   /auth/profile:
     get:
       description: Mengembalikan data user berdasarkan token JWT
@@ -1736,6 +1805,165 @@ paths:
       summary: Mendapatkan detail expense berdasarkan Business ID
       tags:
       - expenses
+  /market-trends:
+    get:
+      description: Mengambil semua data tren pasar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.MarketTrendResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil semua tren pasar
+      tags:
+      - market-trends
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan entitas market trend baru
+      parameters:
+      - description: Market Trend Data
+        in: body
+        name: trend
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateMarketTrendRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat data tren pasar baru
+      tags:
+      - market-trends
+  /market-trends/{id}:
+    delete:
+      description: Menghapus data tren pasar
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Hapus tren pasar
+      tags:
+      - market-trends
+    get:
+      description: Mengambil satu data tren pasar menggunakan ID
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil tren pasar berdasarkan ID
+      tags:
+      - market-trends
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data tren pasar yang sudah ada
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Market Trend Update Data
+        in: body
+        name: trend
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateMarketTrendRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Perbarui tren pasar
+      tags:
+      - market-trends
+  /market-trends/top:
+    get:
+      description: Mengambil 10 data tren pasar dengan skor permintaan tertinggi
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.MarketTrendResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil 10 tren pasar teratas
+      tags:
+      - market-trends
   /product-search-logs:
     get:
       description: Mengambil semua data log pencarian produk
@@ -1865,6 +2093,11 @@ paths:
       - multipart/form-data
       description: Menambahkan data entitas produk baru dan menyimpan path gambar
       parameters:
+      - description: Business ID
+        in: formData
+        name: business_id
+        required: true
+        type: integer
       - description: Product Name
         in: formData
         name: name
@@ -3113,7 +3346,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: Mengubah kolom dari sebuah entitas transaksi
+      description: |-
+        Mengubah kolom dari sebuah entitas transaksi
+        Mengambil kumpulan transaksi menggunakan Business ID
       parameters:
       - description: Transaction ID
         in: path
@@ -3126,7 +3361,13 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.UpdateTransactionRequest'
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
+      - application/json
       - application/json
       responses:
         "200":
@@ -3136,12 +3377,62 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.TransactionResponse'
+                  items:
+                    $ref: '#/definitions/dto.TransactionResponse'
+                  type: array
               type: object
       security:
       - BearerAuth: []
-      summary: Memperbarui data transaksi
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi berdasarkan Business ID
       tags:
+      - transactions
+      - transactions
+  /transactions/business/{id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mengubah kolom dari sebuah entitas transaksi
+        Mengambil kumpulan transaksi menggunakan Business ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionRequest'
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.TransactionResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi berdasarkan Business ID
+      tags:
+      - transactions
       - transactions
 securityDefinitions:
   BearerAuth:

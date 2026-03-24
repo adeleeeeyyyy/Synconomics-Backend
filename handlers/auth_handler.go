@@ -14,11 +14,48 @@ import (
 )
 
 type AuthHandler struct {
-	authService services.AuthService
+	authService     services.AuthService
+	businessService services.BusinessService
 }
 
-func NewAuthHandler(authService services.AuthService) *AuthHandler {
-	return &AuthHandler{authService}
+func NewAuthHandler(authService services.AuthService, businessService services.BusinessService) *AuthHandler {
+	return &AuthHandler{authService, businessService}
+}
+
+// GetMeWithBusinesses
+// @Summary Mendapatkan profil user dan daftar bisnisnya
+// @Description Mengembalikan data user dan semua bisnis yang dimilikinya berdasarkan token JWT
+// @Tags auth
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} helpers.Response{data=dto.UserBusinessResponse}
+// @Router /auth/me-with-businesses [get]
+func (h *AuthHandler) GetMeWithBusinesses(c *fiber.Ctx) error {
+	userID, ok := c.Locals("userID").(uint)
+	if !ok {
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	user, _, err := h.authService.GetProfile(userID)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusNotFound, "user not found")
+	}
+
+	businesses, err := h.businessService.GetBusinessesByUserId(userID)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "failed to fetch businesses")
+	}
+
+	var userResp dto.UserResponse
+	copier.Copy(&userResp, user)
+
+	var bizResp []dto.BusinessResponse
+	copier.Copy(&bizResp, businesses)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "user profile and businesses fetched", dto.UserBusinessResponse{
+		User:       userResp,
+		Businesses: bizResp,
+	})
 }
 
 type RegisterRequest struct {
@@ -178,4 +215,35 @@ func (h *AuthHandler) GoogleCallback(c *fiber.Ctx) error {
 
 	frontendURL := os.Getenv("FRONTEND_URL")
 	return c.Redirect(frontendURL + "/auth/callback?token=" + token)
+}
+// UpdateProfile
+// @Summary Memperbarui profil user
+// @Description Mengubah nama atau email user yang sedang login
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.UpdateProfileRequest true "Update Profile Data"
+// @Success 200 {object} helpers.Response{data=dto.UserResponse}
+// @Router /auth/profile [put]
+func (h *AuthHandler) UpdateProfile(c *fiber.Ctx) error {
+	userID, ok := c.Locals("userID").(uint)
+	if !ok {
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	var req dto.UpdateProfileRequest
+	if err := c.BodyParser(&req); err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid request body")
+	}
+
+	user, err := h.authService.UpdateProfile(userID, req.Name, req.Email)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	var resp dto.UserResponse
+	copier.Copy(&resp, user)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "profile updated", resp)
 }

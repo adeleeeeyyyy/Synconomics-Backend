@@ -10,7 +10,9 @@ import (
 )
 
 func SetupAIRoutes(api fiber.Router) {
+	// Repositories
 	aiRepo := repositories.NewAIRepository(config.DB)
+
 	aiService := services.NewAIService(aiRepo)
 	aiHandler := handlers.NewAIHandler(aiService)
 

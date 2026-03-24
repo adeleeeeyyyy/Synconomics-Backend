@@ -408,6 +408,43 @@
                 }
             }
         },
+        "/auth/me-with-businesses": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengembalikan data user dan semua bisnis yang dimilikinya berdasarkan token JWT",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Mendapatkan profil user dan daftar bisnisnya",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.UserBusinessResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/auth/profile": {
             "get": {
                 "security": [
@@ -1254,6 +1291,281 @@
                 }
             }
         },
+        "/market-trends": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengambil semua data tren pasar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Ambil semua tren pasar",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.MarketTrendResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Menambahkan entitas market trend baru",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Membuat data tren pasar baru",
+                "parameters": [
+                    {
+                        "description": "Market Trend Data",
+                        "name": "trend",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateMarketTrendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.MarketTrendResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/market-trends/top": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengambil 10 data tren pasar dengan skor permintaan tertinggi",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Ambil 10 tren pasar teratas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.MarketTrendResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/market-trends/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengambil satu data tren pasar menggunakan ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Ambil tren pasar berdasarkan ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Trend ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.MarketTrendResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengubah data tren pasar yang sudah ada",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Perbarui tren pasar",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Trend ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Market Trend Update Data",
+                        "name": "trend",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateMarketTrendRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.MarketTrendResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Menghapus data tren pasar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Hapus tren pasar",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Trend ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/product-search-logs": {
             "get": {
                 "security": [
@@ -1490,6 +1802,13 @@
                 ],
                 "summary": "Membuat produk baru",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "business_id",
+                        "in": "formData",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Product Name",
@@ -3497,6 +3816,79 @@
                 }
             }
         },
+        "/transactions/business/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mengubah kolom dari sebuah entitas transaksi\nMengambil kumpulan transaksi menggunakan Business ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions",
+                    "transactions"
+                ],
+                "summary": "Mendapatkan detail transaksi berdasarkan Business ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Transaction Update Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTransactionRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TransactionResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/{id}": {
             "get": {
                 "security": [
@@ -3546,19 +3938,24 @@
                 "security": [
                     {
                         "BearerAuth": []
+                    },
+                    {
+                        "BearerAuth": []
                     }
                 ],
-                "description": "Mengubah kolom dari sebuah entitas transaksi",
+                "description": "Mengubah kolom dari sebuah entitas transaksi\nMengambil kumpulan transaksi menggunakan Business ID",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
+                    "application/json",
                     "application/json"
                 ],
                 "tags": [
+                    "transactions",
                     "transactions"
                 ],
-                "summary": "Memperbarui data transaksi",
+                "summary": "Mendapatkan detail transaksi berdasarkan Business ID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -3575,6 +3972,13 @@
                         "schema": {
                             "$ref": "#/definitions/dto.UpdateTransactionRequest"
                         }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3589,7 +3993,10 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.TransactionResponse"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TransactionResponse"
+                                            }
                                         }
                                     }
                                 }
@@ -3789,6 +4196,26 @@
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateMarketTrendRequest": {
+            "type": "object",
+            "required": [
+                "product_name"
+            ],
+            "properties": {
+                "demand_score": {
+                    "type": "number"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "search_count": {
+                    "type": "integer"
                 }
             }
         },
@@ -3992,13 +4419,36 @@
                 "category": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "expense_date": {
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MarketTrendResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "demand_score": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "search_count": {
                     "type": "integer"
                 }
             }
@@ -4207,6 +4657,23 @@
                 }
             }
         },
+        "dto.UpdateMarketTrendRequest": {
+            "type": "object",
+            "properties": {
+                "demand_score": {
+                    "type": "number"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "search_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.UpdateReplyReq": {
             "type": "object",
             "required": [
@@ -4305,6 +4772,20 @@
                 },
                 "total_amount": {
                     "type": "number"
+                }
+            }
+        },
+        "dto.UserBusinessResponse": {
+            "type": "object",
+            "properties": {
+                "businesses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.BusinessResponse"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserResponse"
                 }
             }
         },

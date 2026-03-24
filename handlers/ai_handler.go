@@ -73,7 +73,12 @@ func (h *AIHandler) Chat(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid request body")
 	}
 
-	reply, err := h.service.Chat(uint(sessionID), req.Message)
+	token := c.Get("Authorization")
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	reply, err := h.service.Chat(uint(sessionID), req.Message, token)
 	if err != nil {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -189,7 +194,12 @@ func (h *AIHandler) chatByRole(c *fiber.Ctx, sessionType string) error {
 		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid request body")
 	}
 
-	reply, err := h.service.ChatByRole(userID, req.BusinessID, sessionType, req.Message)
+	token := c.Get("Authorization")
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	reply, err := h.service.ChatByRole(userID, req.BusinessID, sessionType, req.Message, token)
 	if err != nil {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}

@@ -11,6 +11,11 @@ type UserResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type UserBusinessResponse struct {
+	User       UserResponse       `json:"user"`
+	Businesses []BusinessResponse `json:"businesses"`
+}
+
 // Business Management
 type BusinessResponse struct {
 	ID          uint    `json:"id"`
@@ -53,7 +58,7 @@ type ExpenseResponse struct {
 	BusinessID  uint      `json:"business_id"`
 	Category    string    `json:"category"`
 	Amount      float64   `json:"amount"`
-	Description string    `json:"description"`
+	Title		string	  `json:"title"`
 	ExpenseDate time.Time `json:"expense_date"`
 }
 
@@ -135,4 +140,13 @@ type ProductSearchLogResponse struct {
 	UserID    uint      `json:"user_id"`
 	Keyword   string    `json:"keyword"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+type MarketTrendResponse struct {
+	ID          uint      `json:"id"`
+	ProductName string    `json:"product_name"`
+	SearchCount int       `json:"search_count"`
+	DemandScore float64   `json:"demand_score"`
+	Location    string    `json:"location"`
+	CreatedAt   time.Time `json:"created_at"`
 }

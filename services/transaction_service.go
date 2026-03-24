@@ -32,3 +32,7 @@ func (s *transactionService) UpdateTransaction(transaction *models.Transaction) 
 func (s *transactionService) DeleteTransaction(id uint) error {
 	return s.repo.Delete(id)
 }
+
+func (s *transactionService) GetTransactionsByBusinessId(businessID uint) ([]models.Transaction, error) {
+	return s.repo.FindByBusinessID(businessID)
+}

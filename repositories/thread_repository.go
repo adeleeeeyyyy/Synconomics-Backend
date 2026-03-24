@@ -15,7 +15,7 @@ func NewThreadRepository(db *gorm.DB) ThreadRepository {
 }
 
 func (r *threadRepository) Create(thread *models.Thread) error {
-	return r.db.Create(thread).Error
+	return r.db.Preload("User").Create(thread).Error
 }
 
 func (r *threadRepository) FindAll() ([]models.Thread, error) {

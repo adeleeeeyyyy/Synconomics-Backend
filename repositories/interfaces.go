@@ -34,6 +34,7 @@ type TransactionRepository interface {
 	FindByID(id uint) (*models.Transaction, error)
 	Update(transaction *models.Transaction) error
 	Delete(id uint) error
+	FindByBusinessID(businessID uint) ([]models.Transaction, error)
 }
 
 type TransactionItemRepository interface {
@@ -115,4 +116,13 @@ type ProductSearchLogRepository interface {
 	FindAll() ([]models.ProductSearchLog, error)
 	FindByID(id uint) (*models.ProductSearchLog, error)
 	FindByUserID(userID uint) ([]models.ProductSearchLog, error)
+}
+
+type MarketTrendRepository interface {
+	Create(trend *models.MarketTrend) error
+	FindAll() ([]models.MarketTrend, error)
+	FindByID(id uint) (*models.MarketTrend, error)
+	Update(trend *models.MarketTrend) error
+	Delete(id uint) error
+	FindTopTen() ([]models.MarketTrend, error)
 }

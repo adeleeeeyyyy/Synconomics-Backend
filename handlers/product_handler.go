@@ -27,6 +27,7 @@ func NewProductHandler(service services.ProductService, businessService services
 // @Accept multipart/form-data
 // @Produce json
 // @Security BearerAuth
+// @Param business_id formData integer true "Business ID"
 // @Param name formData string true "Product Name"
 // @Param description formData string false "Product Description"
 // @Param price formData number true "Price"
