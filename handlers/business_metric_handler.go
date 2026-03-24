@@ -27,7 +27,7 @@ func NewBusinessMetricHandler(service services.BusinessMetricService) *BusinessM
 // @Produce json
 // @Security BearerAuth
 // @Param request body dto.CreateBusinessMetricRequest true "Business Metric Body"
-// @Success 201 {object} helpers.Response{data=models.BusinessMetric}
+// @Success 201 {object} helpers.Response{data=dto.BusinessMetricResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 500 {object} helpers.Response
 // @Router /business-metrics [post]
@@ -46,7 +46,12 @@ func (h *BusinessMetricHandler) CreateMetric(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "business metric created", metric)
+	var res dto.BusinessMetricResponse
+	copier.Copy(&res, &metric)
+	res.ID = metric.ID
+	res.CreatedAt = metric.CreatedAt
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "business metric created", res)
 }
 
 // GetMetrics
@@ -55,7 +60,7 @@ func (h *BusinessMetricHandler) CreateMetric(c *fiber.Ctx) error {
 // @Tags business_metrics
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.BusinessMetric}
+// @Success 200 {object} helpers.Response{data=[]dto.BusinessMetricResponse}
 // @Failure 500 {object} helpers.Response
 // @Router /business-metrics [get]
 func (h *BusinessMetricHandler) GetMetrics(c *fiber.Ctx) error {
@@ -64,7 +69,14 @@ func (h *BusinessMetricHandler) GetMetrics(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "business metrics fetched", metrics)
+	var res []dto.BusinessMetricResponse
+	copier.Copy(&res, &metrics)
+	for i, m := range metrics {
+		res[i].ID = m.ID
+		res[i].CreatedAt = m.CreatedAt
+	}
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business metrics fetched", res)
 }
 
 // GetMetric
@@ -74,10 +86,10 @@ func (h *BusinessMetricHandler) GetMetrics(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Metric ID"
-// @Success 200 {object} helpers.Response{data=models.BusinessMetric}
+// @Success 200 {object} helpers.Response{data=dto.BusinessMetricResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 404 {object} helpers.Response
-// @Router / business-metrics/{id} [get]
+// @Router /business-metrics/{id} [get]
 func (h *BusinessMetricHandler) GetMetric(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
 	if err != nil {
@@ -89,7 +101,12 @@ func (h *BusinessMetricHandler) GetMetric(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "business metric not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "business metric fetched", metric)
+	var res dto.BusinessMetricResponse
+	copier.Copy(&res, metric)
+	res.ID = metric.ID
+	res.CreatedAt = metric.CreatedAt
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business metric fetched", res)
 }
 
 // GetMetricsByBusinessId
@@ -99,7 +116,7 @@ func (h *BusinessMetricHandler) GetMetric(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Business ID"
-// @Success 200 {object} helpers.Response{data=[]models.BusinessMetric}
+// @Success 200 {object} helpers.Response{data=[]dto.BusinessMetricResponse}
 // @Failure 400 {object} helpers.Response
 // @Router /business-metrics/business/{id} [get]
 func (h *BusinessMetricHandler) GetMetricsByBusinessId(c *fiber.Ctx) error {
@@ -113,7 +130,14 @@ func (h *BusinessMetricHandler) GetMetricsByBusinessId(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "business metrics not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "business metrics fetched", metrics)
+	var res []dto.BusinessMetricResponse
+	copier.Copy(&res, &metrics)
+	for i, m := range metrics {
+		res[i].ID = m.ID
+		res[i].CreatedAt = m.CreatedAt
+	}
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business metrics fetched", res)
 }
 
 // UpdateMetric
@@ -125,7 +149,7 @@ func (h *BusinessMetricHandler) GetMetricsByBusinessId(c *fiber.Ctx) error {
 // @Security BearerAuth
 // @Param id path int true "Metric ID"
 // @Param request body dto.UpdateBusinessMetricRequest true "Update Body"
-// @Success 200 {object} helpers.Response{data=models.BusinessMetric}
+// @Success 200 {object} helpers.Response{data=dto.BusinessMetricResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 404 {object} helpers.Response
 // @Router /business-metrics/{id} [put]
@@ -153,7 +177,12 @@ func (h *BusinessMetricHandler) UpdateMetric(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "business metric updated", existing)
+	var res dto.BusinessMetricResponse
+	copier.Copy(&res, existing)
+	res.ID = existing.ID
+	res.CreatedAt = existing.CreatedAt
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business metric updated", res)
 }
 
 // DeleteMetric
@@ -186,7 +215,7 @@ func (h *BusinessMetricHandler) DeleteMetric(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Business ID"
-// @Success 200 {object} helpers.Response{data=models.BusinessMetric}
+// @Success 200 {object} helpers.Response{data=dto.BusinessMetricResponse}
 // @Failure 400 {object} helpers.Response
 // @Router /business-metrics/business/{id}/latest [get]
 func (h *BusinessMetricHandler) GetLatestMetricByBusinessId(c *fiber.Ctx) error {
@@ -200,5 +229,10 @@ func (h *BusinessMetricHandler) GetLatestMetricByBusinessId(c *fiber.Ctx) error 
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "latest metric not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "latest business metric fetched", metric)
+	var res dto.BusinessMetricResponse
+	copier.Copy(&res, metric)
+	res.ID = metric.ID
+	res.CreatedAt = metric.CreatedAt
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "latest business metric fetched", res)
 }

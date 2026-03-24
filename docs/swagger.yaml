@@ -81,6 +81,25 @@ definitions:
     - business_id
     - message
     type: object
+  dto.CreateBusinessMetricRequest:
+    properties:
+      business_id:
+        type: integer
+      calculated_at:
+        type: string
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+    required:
+    - business_id
+    type: object
   dto.CreateExpenseRequest:
     properties:
       amount:
@@ -395,6 +414,21 @@ definitions:
       type:
         type: string
     type: object
+  dto.UpdateBusinessMetricRequest:
+    properties:
+      calculated_at:
+        type: string
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+    type: object
   dto.UpdateExpenseRequest:
     properties:
       amount:
@@ -414,6 +448,13 @@ definitions:
         type: string
       search_count:
         type: integer
+    type: object
+  dto.UpdateProfileRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
     type: object
   dto.UpdateReplyReq:
     properties:
@@ -1315,6 +1356,34 @@ paths:
       summary: Mendapatkan profil user yang sedang login
       tags:
       - auth
+    put:
+      consumes:
+      - application/json
+      description: Mengubah nama atau email user yang sedang login
+      parameters:
+      - description: Update Profile Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui profil user
+      tags:
+      - auth
   /auth/register:
     post:
       consumes:
@@ -1449,6 +1518,229 @@ paths:
       summary: Membuat profil bisnis baru
       tags:
       - business
+  /business-metrics:
+    get:
+      description: Fetch all business metric records
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.BusinessMetric'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: List all Business Metrics
+      tags:
+      - business_metrics
+    post:
+      consumes:
+      - application/json
+      description: Add a new business metric record
+      parameters:
+      - description: Business Metric Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateBusinessMetricRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BusinessMetric'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Business Metric
+      tags:
+      - business_metrics
+  /business-metrics/{id}:
+    delete:
+      description: Remove a business metric record
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Business Metric
+      tags:
+      - business_metrics
+    get:
+      description: Fetch a business metric record by ID
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BusinessMetric'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Business Metric
+      tags:
+      - business_metrics
+    put:
+      consumes:
+      - application/json
+      description: Update fields of a business metric record
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateBusinessMetricRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BusinessMetric'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Business Metric
+      tags:
+      - business_metrics
+  /business-metrics/business/{id}:
+    get:
+      description: Fetch business metrics for a specific business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.BusinessMetric'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Business Metrics by Business ID
+      tags:
+      - business_metrics
+  /business-metrics/business/{id}/latest:
+    get:
+      description: Fetch the most recent business metric for a business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BusinessMetric'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Latest Business Metric
+      tags:
+      - business_metrics
   /business/{id}:
     delete:
       description: Menghapus record dari ID entitas bisnis yang ditentukan
