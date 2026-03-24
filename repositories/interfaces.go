@@ -126,3 +126,13 @@ type MarketTrendRepository interface {
 	Delete(id uint) error
 	FindTopTen() ([]models.MarketTrend, error)
 }
+
+type BusinessMetricRepository interface {
+	Create(metric *models.BusinessMetric) error
+	FindAll() ([]models.BusinessMetric, error)
+	FindByID(id uint) (*models.BusinessMetric, error)
+	FindByBusinessID(businessID uint) ([]models.BusinessMetric, error)
+	Update(metric *models.BusinessMetric) error
+	Delete(id uint) error
+	GetLatestByBusinessID(businessID uint) (*models.BusinessMetric, error)
+}

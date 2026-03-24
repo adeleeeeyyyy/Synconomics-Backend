@@ -128,3 +128,13 @@ type MarketTrendService interface {
 	DeleteTrend(id uint) error
 	GetTopTenTrends() ([]models.MarketTrend, error)
 }
+
+type BusinessMetricService interface {
+	CreateMetric(metric *models.BusinessMetric) error
+	GetAllMetrics() ([]models.BusinessMetric, error)
+	GetMetricById(id uint) (*models.BusinessMetric, error)
+	GetMetricsByBusinessId(businessID uint) ([]models.BusinessMetric, error)
+	UpdateMetric(metric *models.BusinessMetric) error
+	DeleteMetric(id uint) error
+	GetLatestMetricByBusinessId(businessID uint) (*models.BusinessMetric, error)
+}
