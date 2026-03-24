@@ -10,14 +10,22 @@ import (
 
 func SetupAuthRoutes(api fiber.Router) {
 	userRepo := repositories.NewUserRepository(config.DB)
+	businessRepo := repositories.NewBusinessRepository(config.DB)
+
 	authService := services.NewAuthServices(userRepo)
-	authHandler := handlers.NewAuthHandler(authService)
+	businessService := services.NewBusinessService(businessRepo)
 
-	api.Post("/auth/register", authHandler.Register)
-	api.Post("/auth/login", authHandler.Login)
+	authHandler := handlers.NewAuthHandler(authService, businessService)
 
-	api.Get("/auth/google", authHandler.GoogleLogin)
-	api.Get("/auth/google/callback", authHandler.GoogleCallback)
+	authGroup := api.Group("/auth")
+	authGroup.Post("/register", authHandler.Register)
+	authGroup.Post("/login", authHandler.Login)
+	authGroup.Get("/google", authHandler.GoogleLogin)
+	authGroup.Get("/google/callback", authHandler.GoogleCallback)
 
-	api.Get("/profile", handlers.JWTMiddleware, authHandler.Profile)
+	// Protected routes
+	authGroup.Use(handlers.JWTMiddleware)
+	authGroup.Get("/profile", authHandler.Profile)
+	authGroup.Put("/profile", authHandler.UpdateProfile)
+	authGroup.Get("/me-with-businesses", authHandler.GetMeWithBusinesses)
 }

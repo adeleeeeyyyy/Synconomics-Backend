@@ -84,7 +84,10 @@ func (h *BusinessHandler) CreateBusiness(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "Business berhasil dibuat", business)
+	var resp dto.BusinessResponse
+	copier.Copy(&resp, &business)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "Business berhasil dibuat", resp)
 }
 
 // GetAllBusinesses
@@ -93,7 +96,7 @@ func (h *BusinessHandler) CreateBusiness(c *fiber.Ctx) error {
 // @Tags business
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} helpers.Response{data=[]models.Business}
+// @Success 200 {object} helpers.Response{data=[]dto.BusinessResponse}
 // @Failure 500 {object} helpers.Response
 // @Router /business [get]
 func (h *BusinessHandler) GetAllBusinesses(c *fiber.Ctx) error {
@@ -102,7 +105,10 @@ func (h *BusinessHandler) GetAllBusinesses(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal mengambil data bisnis")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "Berhasil mengambil semua data bisnis", businesses)
+	var resp []dto.BusinessResponse
+	copier.Copy(&resp, &businesses)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "Berhasil mengambil semua data bisnis", resp)
 }
 
 // GetBusinessById
@@ -112,7 +118,7 @@ func (h *BusinessHandler) GetAllBusinesses(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Business ID"
-// @Success 200 {object} helpers.Response{data=models.Business}
+// @Success 200 {object} helpers.Response{data=dto.BusinessResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 404 {object} helpers.Response
 // @Router /business/{id} [get]
@@ -128,7 +134,33 @@ func (h *BusinessHandler) GetBusinessById(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "Data bisnis tidak ditemukan")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "Berhasil mengambil data bisnis", business)
+	var resp dto.BusinessResponse
+	copier.Copy(&resp, business)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "Berhasil mengambil data bisnis", resp)
+}
+
+// GetMyBusinesses
+// @Summary Mengambil bisnis milik user login
+// @Description Mendapatkan daftar bisnis yang dimiliki oleh user yang sedang login (berdasarkan ID dari JWT)
+// @Tags business
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} helpers.Response{data=[]dto.BusinessResponse}
+// @Failure 500 {object} helpers.Response
+// @Router /business/me [get]
+func (h *BusinessHandler) GetMyBusinesses(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(uint)
+
+	businesses, err := h.businessService.GetBusinessesByUserId(userID)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal mengambil data bisnis user")
+	}
+
+	var resp []dto.BusinessResponse
+	copier.Copy(&resp, &businesses)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "Berhasil mengambil bisnis Anda", resp)
 }
 
 // UpdateBusiness handles updating existing business
@@ -151,7 +183,7 @@ func (h *BusinessHandler) GetBusinessById(c *fiber.Ctx) error {
 // @Param tiktok formData string false "Tiktok"
 // @Param website formData string false "Website"
 // @Param logo_url formData file false "Business Logo (Optional)"
-// @Success 200 {object} helpers.Response{data=models.Business}
+// @Success 200 {object} helpers.Response{data=dto.BusinessResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 404 {object} helpers.Response
 // @Failure 500 {object} helpers.Response
@@ -192,7 +224,10 @@ func (h *BusinessHandler) UpdateBusiness(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "Gagal memperbarui data: "+err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "Data bisnis berhasil diperbarui", existingBusiness)
+	var resp dto.BusinessResponse
+	copier.Copy(&resp, existingBusiness)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "Data bisnis berhasil diperbarui", resp)
 }
 
 // DeleteBusiness handles deleting a business
@@ -220,4 +255,3 @@ func (h *BusinessHandler) DeleteBusiness(c *fiber.Ctx) error {
 
 	return helpers.SuccessResponse(c, fiber.StatusOK, "Bisnis berhasil dihapus", nil)
 }
-

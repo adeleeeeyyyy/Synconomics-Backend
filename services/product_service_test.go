@@ -41,6 +41,10 @@ func (m *MockProductRepository) Delete(id uint) error {
 	return args.Error(0)
 }
 
+func (m *MockProductRepository) FindByBusinessID(businessID uint) ([]models.Product, error) {
+	args := m.Called(businessID)
+	return args.Get(0).([]models.Product), args.Error(1)
+}
 
 func TestCreateProduct_Success(t *testing.T) {
 	mockRepo := new(MockProductRepository)
@@ -87,5 +91,23 @@ func TestGetProductByID_NotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Equal(t, expectedErr, err)
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetProductsByBusinessId_Success(t *testing.T) {
+	mockRepo := new(MockProductRepository)
+	service := NewProductService(mockRepo)
+
+	expectedProducts := []models.Product{
+		{Name: "Kopi Susu", BusinessID: 1},
+	}
+
+	mockRepo.On("FindByBusinessID", uint(1)).Return(expectedProducts, nil)
+
+	result, err := service.GetProductsByBusinessId(1)
+
+	assert.NoError(t, err)
+	assert.Len(t, result, 1)
+	assert.Equal(t, uint(1), result[0].BusinessID)
 	mockRepo.AssertExpectations(t)
 }

@@ -37,3 +37,9 @@ func (r *transactionRepository) Update(transaction *models.Transaction) error {
 func (r *transactionRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Transaction{}, id).Error
 }
+
+func (r *transactionRepository) FindByBusinessID(businessID uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := r.db.Where("business_id = ?", businessID).Preload("TransactionItems").Find(&transactions).Error
+	return transactions, err
+}

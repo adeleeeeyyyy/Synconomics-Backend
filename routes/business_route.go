@@ -21,6 +21,7 @@ func SetupBusinessRoutes(api fiber.Router) {
 
 	business.Post("/", businessHandler.CreateBusiness)
 	business.Get("/", businessHandler.GetAllBusinesses)
+	business.Get("/me", businessHandler.GetMyBusinesses)
 	business.Get("/:id", businessHandler.GetBusinessById)
 	business.Put("/:id", businessHandler.UpdateBusiness)
 	business.Delete("/:id", businessHandler.DeleteBusiness)

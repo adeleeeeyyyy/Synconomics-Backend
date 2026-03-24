@@ -46,12 +46,29 @@ func main() {
 
 	api := app.Group("/api")
 
+	api.Get("/health", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status":  "success",
+			"message": "API is up and running",
+		})
+	})
+
 	routes.SetupAuthRoutes(api)
 	routes.SetupProductRoutes(api)
 	routes.SetupBusinessRoutes(api)
 	routes.SetupTransactionRoutes(api)
 	routes.SetupTransactionItemRoutes(api)
 	routes.SetupExpenseRoutes(api)
+	routes.SetupAIRoutes(api)
+	routes.SetupSupplyRequestRoutes(api)
+	routes.SetupSupplyOfferRoutes(api)
+	routes.SetupSupplyMatchRoutes(api)
+	routes.SetupThreadRoutes(api)
+	routes.SetupReplyRoutes(api)
+	routes.SetupProductSearchLogRoutes(api)
+	routes.SetupMarketTrendRoutes(api)
+	routes.SetupBusinessMetricRoutes(api)
+	routes.SetupBusinessScoreRoutes(api)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

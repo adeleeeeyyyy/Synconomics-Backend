@@ -34,3 +34,7 @@ func (s *businessService) UpdateBusiness(business *models.Business) error {
 func (s *businessService) DeleteBusiness(id uint) error {
 	return s.businessRepo.Delete(id)
 }
+
+func (s *businessService) GetBusinessesByUserId(userID uint) ([]models.Business, error) {
+	return s.businessRepo.FindByUserID(userID)
+}

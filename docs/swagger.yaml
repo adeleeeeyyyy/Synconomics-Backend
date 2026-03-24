@@ -1,5 +1,153 @@
 basePath: /api
 definitions:
+  dto.AIMessageResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      session_id:
+        type: integer
+    type: object
+  dto.AIResultResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      result:
+        type: string
+      session_id:
+        type: integer
+    type: object
+  dto.AISessionResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      type:
+        type: string
+    type: object
+  dto.BusinessMetricResponse:
+    properties:
+      business:
+        $ref: '#/definitions/models.Business'
+      business_id:
+        type: integer
+      calculated_at:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+    type: object
+  dto.BusinessResponse:
+    properties:
+      address:
+        type: string
+      category:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      instagram:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      name:
+        type: string
+      phone:
+        type: string
+      tiktok:
+        type: string
+      user_id:
+        type: integer
+      website:
+        type: string
+      whatsapp:
+        type: string
+    type: object
+  dto.BusinessScoreResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      insight:
+        type: string
+      score:
+        type: integer
+    type: object
+  dto.ChatRequest:
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
+  dto.ChatWithRoleRequest:
+    properties:
+      business_id:
+        type: integer
+      message:
+        type: string
+    required:
+    - business_id
+    - message
+    type: object
+  dto.CreateBusinessMetricRequest:
+    properties:
+      business_id:
+        type: integer
+      calculated_at:
+        type: string
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+    required:
+    - business_id
+    type: object
+  dto.CreateBusinessScoreRequest:
+    properties:
+      business_id:
+        type: integer
+      insight:
+        type: string
+      score:
+        type: integer
+    required:
+    - business_id
+    - score
+    type: object
   dto.CreateExpenseRequest:
     properties:
       amount:
@@ -14,6 +162,113 @@ definitions:
     - amount
     - business_id
     - category
+    - title
+    type: object
+  dto.CreateMarketTrendRequest:
+    properties:
+      demand_score:
+        type: number
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
+        type: integer
+    required:
+    - product_name
+    type: object
+  dto.CreateProductSearchLogReq:
+    properties:
+      keyword:
+        type: string
+    required:
+    - keyword
+    type: object
+  dto.CreateReplyReq:
+    properties:
+      content:
+        type: string
+      thread_id:
+        type: integer
+    required:
+    - content
+    - thread_id
+    type: object
+  dto.CreateSessionRequest:
+    properties:
+      business_id:
+        type: integer
+      type:
+        enum:
+        - idea_generation
+        - validation
+        - strategy
+        type: string
+    required:
+    - business_id
+    - type
+    type: object
+  dto.CreateSupplyMatchReq:
+    properties:
+      status:
+        enum:
+        - pending
+        - accepted
+        - rejected
+        type: string
+      supply_offer_id:
+        type: integer
+      supply_request_id:
+        type: integer
+    required:
+    - supply_offer_id
+    - supply_request_id
+    type: object
+  dto.CreateSupplyOfferReq:
+    properties:
+      business_id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - business_id
+    - product_name
+    - quantity
+    type: object
+  dto.CreateSupplyRequestReq:
+    properties:
+      business_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+      status:
+        enum:
+        - open
+        - matched
+        - closed
+        type: string
+    required:
+    - business_id
+    - product_name
+    - quantity
+    - status
+    type: object
+  dto.CreateThreadReq:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
     - title
     type: object
   dto.CreateTransactionItemRequest:
@@ -53,11 +308,252 @@ definitions:
     - status
     - total_amount
     type: object
+  dto.ExpenseResponse:
+    properties:
+      amount:
+        type: number
+      business_id:
+        type: integer
+      category:
+        type: string
+      expense_date:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.MarketTrendResponse:
+    properties:
+      created_at:
+        type: string
+      demand_score:
+        type: number
+      id:
+        type: integer
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
+        type: integer
+    type: object
+  dto.ProductResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      min_stock:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.ProductSearchLogResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      keyword:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.ReplyResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      thread_id:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+      user_id:
+        type: integer
+    type: object
+  dto.SupplyMatchResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      supply_offer_id:
+        type: integer
+      supply_request_id:
+        type: integer
+    type: object
+  dto.SupplyOfferResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  dto.SupplyRequestResponse:
+    properties:
+      business_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  dto.ThreadResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+      user_id:
+        type: integer
+    type: object
+  dto.TransactionResponse:
+    properties:
+      business_id:
+        type: integer
+      id:
+        type: integer
+      total_amount:
+        type: number
+      transaction_date:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.UpdateBusinessMetricRequest:
+    properties:
+      calculated_at:
+        type: string
+      net_profit:
+        type: number
+      sales_growth:
+        type: number
+      stock_turnover:
+        type: number
+      total_expense:
+        type: number
+      total_revenue:
+        type: number
+    type: object
+  dto.UpdateBusinessScoreRequest:
+    properties:
+      insight:
+        type: string
+      score:
+        type: integer
+    type: object
   dto.UpdateExpenseRequest:
     properties:
       amount:
         type: number
       category:
+        type: string
+      title:
+        type: string
+    type: object
+  dto.UpdateMarketTrendRequest:
+    properties:
+      demand_score:
+        type: number
+      location:
+        type: string
+      product_name:
+        type: string
+      search_count:
+        type: integer
+    type: object
+  dto.UpdateProfileRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.UpdateReplyReq:
+    properties:
+      content:
+        type: string
+    required:
+    - content
+    type: object
+  dto.UpdateSupplyMatchStatusReq:
+    properties:
+      status:
+        enum:
+        - pending
+        - accepted
+        - rejected
+        type: string
+    required:
+    - status
+    type: object
+  dto.UpdateSupplyOfferReq:
+    properties:
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  dto.UpdateSupplyRequestReq:
+    properties:
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      status:
+        enum:
+        - open
+        - matched
+        - closed
+        type: string
+    type: object
+  dto.UpdateThreadReq:
+    properties:
+      content:
         type: string
       title:
         type: string
@@ -81,6 +577,28 @@ definitions:
         type: string
       total_amount:
         type: number
+    type: object
+  dto.UserBusinessResponse:
+    properties:
+      businesses:
+        items:
+          $ref: '#/definitions/dto.BusinessResponse'
+        type: array
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
+  dto.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      google_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   gorm.DeletedAt:
     properties:
@@ -616,6 +1134,201 @@ info:
   title: Synconomics API
   version: "1.0"
 paths:
+  /ai/chat/idea-generation:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Idea Generation (otomatis session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Idea Generation
+      tags:
+      - ai
+  /ai/chat/strategy:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Business Strategy (otomatis session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIMessageResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Business Strategy
+      tags:
+      - ai
+  /ai/chat/validation:
+    post:
+      consumes:
+      - application/json
+      description: Mengirim pesan ke AI dengan role Business Validation (otomatis
+        session)
+      parameters:
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatWithRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Chat khusus Business Validation
+      tags:
+      - ai
+  /ai/sessions:
+    post:
+      consumes:
+      - application/json
+      description: Menyimpan topik dan inisialisasi session AI
+      parameters:
+      - description: Create Session Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AISessionResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat sesi AI chat baru
+      tags:
+      - ai
+  /ai/sessions/{id}/chat:
+    post:
+      consumes:
+      - application/json
+      description: Membalas pesan prompt user berdasarkan konteks session
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIMessageResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mengirim pesan ke Gemini AI
+      tags:
+      - ai
+  /ai/sessions/{id}/messages:
+    get:
+      description: Mendapatkan seluruh log AIMessage berdasarkan Session ID
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.AIMessageResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mengambil riwayat chat
+      tags:
+      - ai
+  /ai/sessions/{id}/result:
+    post:
+      description: Menutup sesi dan merangkum prompt di json AIResult
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AIResultResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mengkalkulasi resume percakapan chat session
+      tags:
+      - ai
   /auth/google:
     get:
       description: Redirect ke Google OAuth Login
@@ -648,19 +1361,34 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       summary: Login pengguna
+      tags:
+      - auth
+  /auth/me-with-businesses:
+    get:
+      description: Mengembalikan data user dan semua bisnis yang dimilikinya berdasarkan
+        token JWT
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserBusinessResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan profil user dan daftar bisnisnya
       tags:
       - auth
   /auth/profile:
@@ -672,21 +1400,43 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Unauthorized
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: Mendapatkan profil user yang sedang login
+      tags:
+      - auth
+    put:
+      consumes:
+      - application/json
+      description: Mengubah nama atau email user yang sedang login
+      parameters:
+      - description: Update Profile Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui profil user
       tags:
       - auth
   /auth/register:
@@ -707,13 +1457,12 @@ paths:
         "201":
           description: Created
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: invalid body request
-          schema:
-            additionalProperties: true
-            type: object
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
       summary: Register pengguna baru
       tags:
       - auth
@@ -731,7 +1480,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Business'
+                    $ref: '#/definitions/dto.BusinessResponse'
                   type: array
               type: object
         "500":
@@ -824,6 +1573,452 @@ paths:
       summary: Membuat profil bisnis baru
       tags:
       - business
+  /business-metrics:
+    get:
+      description: Fetch all business metric records
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessMetricResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: List all Business Metrics
+      tags:
+      - business_metrics
+    post:
+      consumes:
+      - application/json
+      description: Add a new business metric record
+      parameters:
+      - description: Business Metric Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateBusinessMetricRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessMetricResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Business Metric
+      tags:
+      - business_metrics
+  /business-metrics/{id}:
+    delete:
+      description: Remove a business metric record
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Business Metric
+      tags:
+      - business_metrics
+    get:
+      description: Fetch a business metric record by ID
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessMetricResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Business Metric
+      tags:
+      - business_metrics
+    put:
+      consumes:
+      - application/json
+      description: Update fields of a business metric record
+      parameters:
+      - description: Metric ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateBusinessMetricRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessMetricResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Business Metric
+      tags:
+      - business_metrics
+  /business-metrics/business/{id}:
+    get:
+      description: Fetch business metrics for a specific business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessMetricResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Business Metrics by Business ID
+      tags:
+      - business_metrics
+  /business-metrics/business/{id}/latest:
+    get:
+      description: Fetch the most recent business metric for a business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessMetricResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Latest Business Metric
+      tags:
+      - business_metrics
+  /business-scores:
+    get:
+      description: Fetch all business score records
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessScoreResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: List all Business Scores
+      tags:
+      - business_scores
+    post:
+      consumes:
+      - application/json
+      description: Add a new business score record
+      parameters:
+      - description: Business Score Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateBusinessScoreRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessScoreResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Create Business Score
+      tags:
+      - business_scores
+  /business-scores/{id}:
+    delete:
+      description: Remove a business score record
+      parameters:
+      - description: Score ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete Business Score
+      tags:
+      - business_scores
+    get:
+      description: Fetch a business score record by ID
+      parameters:
+      - description: Score ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessScoreResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Detail Business Score
+      tags:
+      - business_scores
+    put:
+      consumes:
+      - application/json
+      description: Update fields of a business score record
+      parameters:
+      - description: Score ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateBusinessScoreRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessScoreResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Update Business Score
+      tags:
+      - business_scores
+  /business-scores/business/{id}:
+    get:
+      description: Fetch business scores for a specific business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessScoreResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Business Scores by Business ID
+      tags:
+      - business_scores
+  /business-scores/business/{id}/latest:
+    get:
+      description: Fetch the most recent business score for a business
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.BusinessScoreResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Latest Business Score
+      tags:
+      - business_scores
   /business/{id}:
     delete:
       description: Menghapus record dari ID entitas bisnis yang ditentukan
@@ -871,7 +2066,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Business'
+                  $ref: '#/definitions/dto.BusinessResponse'
               type: object
         "400":
           description: Bad Request
@@ -955,7 +2150,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Business'
+                  $ref: '#/definitions/dto.BusinessResponse'
               type: object
         "400":
           description: Bad Request
@@ -974,6 +2169,33 @@ paths:
       summary: Memperbarui bisnis yang sudah ada
       tags:
       - business
+  /business/me:
+    get:
+      description: Mendapatkan daftar bisnis yang dimiliki oleh user yang sedang login
+        (berdasarkan ID dari JWT)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.BusinessResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Mengambil bisnis milik user login
+      tags:
+      - business
   /expenses:
     get:
       consumes:
@@ -990,7 +2212,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Expense'
+                    $ref: '#/definitions/dto.ExpenseResponse'
                   type: array
               type: object
         "500":
@@ -1085,16 +2307,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Expense'
+                  $ref: '#/definitions/dto.ExpenseResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail expense
@@ -1126,20 +2340,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Expense'
+                  $ref: '#/definitions/dto.ExpenseResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Memperbarui data expense
@@ -1165,22 +2367,271 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Expense'
+                    $ref: '#/definitions/dto.ExpenseResponse'
                   type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail expense berdasarkan Business ID
       tags:
       - expenses
+  /market-trends:
+    get:
+      description: Mengambil semua data tren pasar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.MarketTrendResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil semua tren pasar
+      tags:
+      - market-trends
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan entitas market trend baru
+      parameters:
+      - description: Market Trend Data
+        in: body
+        name: trend
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateMarketTrendRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat data tren pasar baru
+      tags:
+      - market-trends
+  /market-trends/{id}:
+    delete:
+      description: Menghapus data tren pasar
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Hapus tren pasar
+      tags:
+      - market-trends
+    get:
+      description: Mengambil satu data tren pasar menggunakan ID
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil tren pasar berdasarkan ID
+      tags:
+      - market-trends
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data tren pasar yang sudah ada
+      parameters:
+      - description: Trend ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Market Trend Update Data
+        in: body
+        name: trend
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateMarketTrendRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.MarketTrendResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Perbarui tren pasar
+      tags:
+      - market-trends
+  /market-trends/top:
+    get:
+      description: Mengambil 10 data tren pasar dengan skor permintaan tertinggi
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.MarketTrendResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ambil 10 tren pasar teratas
+      tags:
+      - market-trends
+  /product-search-logs:
+    get:
+      description: Mengambil semua data log pencarian produk
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductSearchLogResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Log Pencarian
+      tags:
+      - product_search_logs
+    post:
+      consumes:
+      - application/json
+      description: Menyimpan kata kunci pencarian yang dilakukan user
+      parameters:
+      - description: Log Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductSearchLogReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductSearchLog'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Log Pencarian Produk
+      tags:
+      - product_search_logs
+  /product-search-logs/{id}:
+    get:
+      description: Mengambil informasi log pencarian menggunakan ID
+      parameters:
+      - description: Log ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductSearchLogResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Log Pencarian
+      tags:
+      - product_search_logs
+  /product-search-logs/me:
+    get:
+      description: Mengambil semua data log pencarian milik user yang sedang login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductSearchLogResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar Log Pencarian milik User
+      tags:
+      - product_search_logs
   /products:
     get:
       consumes:
@@ -1197,7 +2648,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Product'
+                    $ref: '#/definitions/dto.ProductResponse'
                   type: array
               type: object
         "500":
@@ -1212,6 +2663,11 @@ paths:
       - multipart/form-data
       description: Menambahkan data entitas produk baru dan menyimpan path gambar
       parameters:
+      - description: Business ID
+        in: formData
+        name: business_id
+        required: true
+        type: integer
       - description: Product Name
         in: formData
         name: name
@@ -1245,7 +2701,7 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
               type: object
         "400":
           description: Bad Request
@@ -1307,16 +2763,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail produk
@@ -1358,14 +2806,203 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Product'
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui parameter produk
+      tags:
+      - products
+  /products/business/{businessId}:
+    get:
+      description: Mengambil semua data produk milik sebuah bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: businessId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Mendapatkan daftar produk dalam satu bisnis
+      tags:
+      - products
+  /replies:
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data balasan pada thread
+      parameters:
+      - description: Reply Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateReplyReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Reply'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Reply baru
+      tags:
+      - replies
+  /replies/{id}:
+    delete:
+      description: Menghapus balasan
+      parameters:
+      - description: Reply ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Reply
+      tags:
+      - replies
+    put:
+      consumes:
+      - application/json
+      description: Mengubah isi balasan
+      parameters:
+      - description: Reply ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateReplyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ReplyResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Reply
+      tags:
+      - replies
+  /replies/thread/{threadId}:
+    get:
+      description: Mengambil semua data balasan milik satu thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: threadId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ReplyResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar balasan di Thread
+      tags:
+      - replies
+  /supply-matches:
+    get:
+      description: Mengambil semua data supply match
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SupplyMatchResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Match
+      tags:
+      - supply_matches
+    post:
+      consumes:
+      - application/json
+      description: Menghubungkan supply request dengan supply offer
+      parameters:
+      - description: Supply Match Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyMatchReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyMatch'
               type: object
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/helpers.Response'
         "500":
@@ -1374,9 +3011,580 @@ paths:
             $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
-      summary: Memperbarui parameter produk
+      summary: Membuat Supply Match
       tags:
-      - products
+      - supply_matches
+  /supply-matches/{id}:
+    delete:
+      description: Menghapus data supply match
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Match
+      tags:
+      - supply_matches
+    get:
+      description: Mengambil informasi supply match menggunakan ID
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyMatchResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Match
+      tags:
+      - supply_matches
+  /supply-matches/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Mengubah status (accepted/rejected) supply match
+      parameters:
+      - description: Supply Match ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Status Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyMatchStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyMatchResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update status Supply Match
+      tags:
+      - supply_matches
+  /supply-offers:
+    get:
+      description: Mengambil semua data supply offer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SupplyOfferResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Offer
+      tags:
+      - supply_offers
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data penawaran supply baru
+      parameters:
+      - description: Supply Offer Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyOfferReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyOffer'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat Supply Offer
+      tags:
+      - supply_offers
+  /supply-offers/{id}:
+    delete:
+      description: Menghapus penawaran supply
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Offer
+      tags:
+      - supply_offers
+    get:
+      description: Mengambil informasi supply offer menggunakan ID
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyOfferResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Offer
+      tags:
+      - supply_offers
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada supply offer
+      parameters:
+      - description: Supply Offer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyOfferReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyOfferResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Supply Offer
+      tags:
+      - supply_offers
+  /supply-offers/business/{id}:
+    get:
+      description: Mengambil penawaran supply milik satu bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SupplyOfferResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Supply Offer berdasarkan Business
+      tags:
+      - supply_offers
+  /supply-requests:
+    get:
+      description: Mengambil semua data supply request
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SupplyRequestResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Supply Request
+      tags:
+      - supply_requests
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data permintaan supply baru
+      parameters:
+      - description: Supply Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateSupplyRequestReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SupplyRequest'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Membuat Supply Request
+      tags:
+      - supply_requests
+  /supply-requests/{id}:
+    delete:
+      description: Menghapus permintaan supply
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Supply Request
+      tags:
+      - supply_requests
+    get:
+      description: Mengambil informasi supply request menggunakan ID
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyRequestResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Supply Request
+      tags:
+      - supply_requests
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada supply request
+      parameters:
+      - description: Supply Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSupplyRequestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SupplyRequestResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Supply Request
+      tags:
+      - supply_requests
+  /supply-requests/business/{id}:
+    get:
+      description: Mengambil permintaan supply milik satu bisnis
+      parameters:
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SupplyRequestResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Supply Request berdasarkan Business
+      tags:
+      - supply_requests
+  /threads:
+    get:
+      description: Mengambil semua data thread
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ThreadResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar seluruh Thread
+      tags:
+      - threads
+    post:
+      consumes:
+      - application/json
+      description: Menambahkan data diskusi/thread baru
+      parameters:
+      - description: Thread Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateThreadReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Thread'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Membuat Thread baru
+      tags:
+      - threads
+  /threads/{id}:
+    delete:
+      description: Menghapus thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Menghapus Thread
+      tags:
+      - threads
+    get:
+      description: Mengambil informasi thread menggunakan ID
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ThreadResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail Thread
+      tags:
+      - threads
+    put:
+      consumes:
+      - application/json
+      description: Mengubah kolom pada thread
+      parameters:
+      - description: Thread ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateThreadReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ThreadResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Memperbarui Thread
+      tags:
+      - threads
   /transaction_items:
     get:
       consumes:
@@ -1602,7 +3810,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Transaction'
+                    $ref: '#/definitions/dto.TransactionResponse'
                   type: array
               type: object
         "500":
@@ -1698,16 +3906,8 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Transaction'
+                  $ref: '#/definitions/dto.TransactionResponse'
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
       summary: Mendapatkan detail transaksi
@@ -1716,7 +3916,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: Mengubah kolom dari sebuah entitas transaksi
+      description: |-
+        Mengubah kolom dari sebuah entitas transaksi
+        Mengambil kumpulan transaksi menggunakan Business ID
       parameters:
       - description: Transaction ID
         in: path
@@ -1729,7 +3931,13 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.UpdateTransactionRequest'
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
+      - application/json
       - application/json
       responses:
         "200":
@@ -1739,24 +3947,62 @@ paths:
             - $ref: '#/definitions/helpers.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Transaction'
+                  items:
+                    $ref: '#/definitions/dto.TransactionResponse'
+                  type: array
               type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/helpers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/helpers.Response'
       security:
       - BearerAuth: []
-      summary: Memperbarui data transaksi
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi berdasarkan Business ID
       tags:
+      - transactions
+      - transactions
+  /transactions/business/{id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mengubah kolom dari sebuah entitas transaksi
+        Mengambil kumpulan transaksi menggunakan Business ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction Update Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTransactionRequest'
+      - description: Business ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.TransactionResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      - BearerAuth: []
+      summary: Mendapatkan detail transaksi berdasarkan Business ID
+      tags:
+      - transactions
       - transactions
 securityDefinitions:
   BearerAuth:

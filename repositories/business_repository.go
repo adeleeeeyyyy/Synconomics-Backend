@@ -40,3 +40,9 @@ func (r *businessRepository) Update(business *models.Business) error {
 func (r *businessRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Business{}, id).Error
 }
+
+func (r *businessRepository) FindByUserID(userID uint) ([]models.Business, error) {
+	var businesses []models.Business
+	err := r.db.Where("user_id = ?", userID).Find(&businesses).Error
+	return businesses, err
+}

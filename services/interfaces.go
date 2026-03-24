@@ -11,6 +11,7 @@ type AuthService interface {
 	Login(email, password string) (*models.User, string, error)
 	HandleGoogleCallback(googleUser goth.User) (*models.User, string, error)
 	GetProfile(userID uint) (*models.User, string, error)
+	UpdateProfile(userID uint, name, email string) (*models.User, error)
 }
 
 type ProductService interface {
@@ -18,7 +19,8 @@ type ProductService interface {
 	GetAllProducts() ([]models.Product, error)
 	GetProductById(id uint) (*models.Product, error)
 	UpdateProduct(product *models.Product) error
-	DeleteProduct(id uint) error 
+	DeleteProduct(id uint) error
+	GetProductsByBusinessId(businessID uint) ([]models.Product, error)
 }
 
 type BusinessService interface {
@@ -26,7 +28,8 @@ type BusinessService interface {
 	GetAllBusinesses() ([]models.Business, error)
 	GetBusinessById(id uint) (*models.Business, error)
 	UpdateBusiness(business *models.Business) error
-	DeleteBusiness(id uint) error 
+	DeleteBusiness(id uint) error
+	GetBusinessesByUserId(userID uint) ([]models.Business, error)
 }
 
 type TransactionService interface {
@@ -35,6 +38,7 @@ type TransactionService interface {
 	GetTransactionById(id uint) (*models.Transaction, error)
 	UpdateTransaction(transaction *models.Transaction) error
 	DeleteTransaction(id uint) error 
+	GetTransactionsByBusinessId(businessID uint) ([]models.Transaction, error)
 }
 
 type TransactionItemService interface {
@@ -53,4 +57,94 @@ type ExpenseService interface {
 	GetExpensesByBusinessId(businessID uint) ([]models.Expense, error)
 	UpdateExpense(expense *models.Expense) error
 	DeleteExpense(id uint) error 
+}
+
+type AIService interface {
+	CreateSession(userID, businessID uint, sessionType string) (*models.AISession, error)
+	Chat(sessionID uint, userMessage string, token string) (*models.AIMessage, error)
+	FinalizeSessionResult(sessionID uint) (*models.AIResult, error)
+	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
+	GetSessionResult(sessionID uint) (*models.AIResult, error)
+	ChatByRole(userID, businessID uint, sessionType string, message string, token string) (*models.AIMessage, error)
+}
+
+type SupplyRequestService interface {
+	CreateSupplyRequest(req *models.SupplyRequest) error
+	GetAllSupplyRequests() ([]models.SupplyRequest, error)
+	GetSupplyRequestById(id uint) (*models.SupplyRequest, error)
+	GetSupplyRequestsByBusinessId(businessID uint) ([]models.SupplyRequest, error)
+	UpdateSupplyRequest(req *models.SupplyRequest) error
+	DeleteSupplyRequest(id uint) error
+}
+
+type SupplyOfferService interface {
+	CreateSupplyOffer(offer *models.SupplyOffer) error
+	GetAllSupplyOffers() ([]models.SupplyOffer, error)
+	GetSupplyOfferById(id uint) (*models.SupplyOffer, error)
+	GetSupplyOffersByBusinessId(businessID uint) ([]models.SupplyOffer, error)
+	UpdateSupplyOffer(offer *models.SupplyOffer) error
+	DeleteSupplyOffer(id uint) error
+}
+
+type SupplyMatchService interface {
+	CreateSupplyMatch(match *models.SupplyMatch) error
+	GetAllSupplyMatches() ([]models.SupplyMatch, error)
+	GetSupplyMatchById(id uint) (*models.SupplyMatch, error)
+	GetSupplyMatchesByRequestId(requestID uint) ([]models.SupplyMatch, error)
+	GetSupplyMatchesByOfferId(offerID uint) ([]models.SupplyMatch, error)
+	UpdateSupplyMatch(match *models.SupplyMatch) error
+	DeleteSupplyMatch(id uint) error
+}
+
+type ThreadService interface {
+	CreateThread(thread *models.Thread) error
+	GetAllThreads() ([]models.Thread, error)
+	GetThreadById(id uint) (*models.Thread, error)
+	UpdateThread(thread *models.Thread) error
+	DeleteThread(id uint) error
+}
+
+type ReplyService interface {
+	CreateReply(reply *models.Reply) error
+	GetAllReplies() ([]models.Reply, error)
+	GetReplyById(id uint) (*models.Reply, error)
+	GetRepliesByThreadId(threadID uint) ([]models.Reply, error)
+	UpdateReply(reply *models.Reply) error
+	DeleteReply(id uint) error
+}
+
+type ProductSearchLogService interface {
+	CreateLog(log *models.ProductSearchLog) error
+	GetAllLogs() ([]models.ProductSearchLog, error)
+	GetLogById(id uint) (*models.ProductSearchLog, error)
+	GetLogsByUserId(userID uint) ([]models.ProductSearchLog, error)
+}
+
+type MarketTrendService interface {
+	CreateTrend(trend *models.MarketTrend) error
+	GetAllTrends() ([]models.MarketTrend, error)
+	GetTrendById(id uint) (*models.MarketTrend, error)
+	UpdateTrend(trend *models.MarketTrend) error
+	DeleteTrend(id uint) error
+	GetTopTenTrends() ([]models.MarketTrend, error)
+}
+
+type BusinessMetricService interface {
+	CreateMetric(metric *models.BusinessMetric) error
+	GetAllMetrics() ([]models.BusinessMetric, error)
+	GetMetricById(id uint) (*models.BusinessMetric, error)
+	GetMetricsByBusinessId(businessID uint) ([]models.BusinessMetric, error)
+	UpdateMetric(metric *models.BusinessMetric) error
+	DeleteMetric(id uint) error
+	GetLatestMetricByBusinessId(businessID uint) (*models.BusinessMetric, error)
+}
+
+type BusinessScoreService interface {
+	CreateScore(score *models.BusinessScore) error
+	GetAllScores() ([]models.BusinessScore, error)
+	GetScoreById(id uint) (*models.BusinessScore, error)
+	GetScoresByBusinessId(businessID uint) ([]models.BusinessScore, error)
+	UpdateScore(score *models.BusinessScore) error
+	DeleteScore(id uint) error
+	GetLatestScoreByBusinessId(businessID uint) (*models.BusinessScore, error)
 }

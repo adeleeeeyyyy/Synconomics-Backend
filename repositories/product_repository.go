@@ -38,3 +38,9 @@ func (r *productRepository) Update(product *models.Product) error {
 func (r *productRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Product{}, id).Error
 }
+
+func (r *productRepository) FindByBusinessID(businessID uint) ([]models.Product, error) {
+	var products []models.Product
+	err := r.db.Where("business_id = ?", businessID).Find(&products).Error
+	return products, err
+}

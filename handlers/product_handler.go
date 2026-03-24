@@ -12,11 +12,12 @@ import (
 )
 
 type ProductHandler struct {
-	service services.ProductService
+	service         services.ProductService
+	businessService services.BusinessService
 }
 
-func NewProductHandler(service services.ProductService) *ProductHandler {
-	return &ProductHandler{service}
+func NewProductHandler(service services.ProductService, businessService services.BusinessService) *ProductHandler {
+	return &ProductHandler{service, businessService}
 }
 
 // CreateProduct
@@ -26,12 +27,13 @@ func NewProductHandler(service services.ProductService) *ProductHandler {
 // @Accept multipart/form-data
 // @Produce json
 // @Security BearerAuth
+// @Param business_id formData integer true "Business ID"
 // @Param name formData string true "Product Name"
 // @Param description formData string false "Product Description"
 // @Param price formData number true "Price"
 // @Param stock formData integer false "Stock"
 // @Param image_url formData file true "Product Image"
-// @Success 201 {object} helpers.Response{data=models.Product}
+// @Success 201 {object} helpers.Response{data=dto.ProductResponse}
 // @Failure 400 {object} helpers.Response
 // @Failure 500 {object} helpers.Response
 // @Router /products [post]
@@ -51,13 +53,22 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "failed to map")
 	}
 
+	// Validate Business existence
+	_, err = h.businessService.GetBusinessById(newProduct.BusinessID)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "business not found: please ensure the business_id is correct")
+	}
+
 	newProduct.ImageURL = filePath
 
 	if err := h.service.CreateProduct(&newProduct); err != nil {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusCreated, "product creaed", newProduct)
+	var resp dto.ProductResponse
+	copier.Copy(&resp, &newProduct)
+
+	return helpers.SuccessResponse(c, fiber.StatusCreated, "product created", resp)
 }
 
 // GetProducts
@@ -66,7 +77,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 // @Tags products
 // @Accept json
 // @Produce json
-// @Success 200 {object} helpers.Response{data=[]models.Product} "Sukses mengambil data"
+// @Success 200 {object} helpers.Response{data=[]dto.ProductResponse} "Sukses mengambil data"
 // @Failure 500 {object} helpers.Response "internal server error"
 // @Router /products [get]
 func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
@@ -75,7 +86,10 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "products fetched", products)
+	var resp []dto.ProductResponse
+	copier.Copy(&resp, &products)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "products fetched", resp)
 }
 
 // GetProduct
@@ -85,9 +99,7 @@ func (h *ProductHandler) GetProducts(c *fiber.Ctx) error {
 // @Produce json
 // @Security BearerAuth
 // @Param id path int true "Product ID"
-// @Success 200 {object} helpers.Response{data=models.Product}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.ProductResponse}
 // @Router /products/{id} [get]
 func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -100,7 +112,36 @@ func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "product not found")
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "product fetched", product)
+	var resp dto.ProductResponse
+	copier.Copy(&resp, product)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "product fetched", resp)
+}
+
+// GetProductsByBusiness
+// @Summary Mendapatkan daftar produk dalam satu bisnis
+// @Description Mengambil semua data produk milik sebuah bisnis
+// @Tags products
+// @Produce json
+// @Security BearerAuth
+// @Param businessId path int true "Business ID"
+// @Success 200 {object} helpers.Response{data=[]dto.ProductResponse}
+// @Router /products/business/{businessId} [get]
+func (h *ProductHandler) GetProductsByBusiness(c *fiber.Ctx) error {
+	businessId, err := strconv.ParseUint(c.Params("businessId"), 10, 32)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid business id")
+	}
+
+	products, err := h.service.GetProductsByBusinessId(uint(businessId))
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	var resp []dto.ProductResponse
+	copier.Copy(&resp, &products)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business products fetched", resp)
 }
 
 // UpdateProduct
@@ -115,10 +156,7 @@ func (h *ProductHandler) GetProduct(c *fiber.Ctx) error {
 // @Param description formData string false "Product Description"
 // @Param price formData number false "Price"
 // @Param stock formData integer false "Stock"
-// @Success 200 {object} helpers.Response{data=models.Product}
-// @Failure 400 {object} helpers.Response
-// @Failure 404 {object} helpers.Response
-// @Failure 500 {object} helpers.Response
+// @Success 200 {object} helpers.Response{data=dto.ProductResponse}
 // @Router /products/{id} [put]
 func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
@@ -139,7 +177,10 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return helpers.SuccessResponse(c, fiber.StatusOK, "product updated", existingProduct)
+	var resp dto.ProductResponse
+	copier.Copy(&resp, existingProduct)
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "product updated", resp)
 }
 
 // DeleteProduct

@@ -21,6 +21,7 @@ func SetupTransactionRoutes(api fiber.Router) {
 	transactions.Post("/", transactionHandler.CreateTransaction)
 	transactions.Get("/", transactionHandler.GetTransactions)
 	transactions.Get("/:id", transactionHandler.GetTransaction)
+	transactions.Get("/business/:id", transactionHandler.GetTransactionsByBusinessId)
 	transactions.Put("/:id", transactionHandler.UpdateTransaction)
 	transactions.Delete("/:id", transactionHandler.DeleteTransaction)
 }
