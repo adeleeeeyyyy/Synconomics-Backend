@@ -2831,6 +2831,18 @@ const docTemplate = `{
                         "description": "Stock",
                         "name": "stock",
                         "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Min Stock",
+                        "name": "min_stock",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Product Image",
+                        "name": "image_url",
+                        "in": "formData"
                     }
                 ],
                 "responses": {

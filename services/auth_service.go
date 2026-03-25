@@ -113,7 +113,7 @@ func (s *authService) GetProfile(userID uint) (*models.User, string, error) {
 	token, err := config.GenerateToken(user.ID)
 	return user, token, err
 }
-func (s *authService) UpdateProfile(userID uint, name, email string) (*models.User, error) {
+func (s *authService) UpdateProfile(userID uint, name, email, avatar string) (*models.User, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, err
@@ -129,6 +129,9 @@ func (s *authService) UpdateProfile(userID uint, name, email string) (*models.Us
 			return nil, errors.New("email already taken")
 		}
 		user.Email = email
+	}
+	if avatar != "" {
+		user.Avatar = &avatar
 	}
 
 	if err := s.userRepo.Update(user); err != nil {

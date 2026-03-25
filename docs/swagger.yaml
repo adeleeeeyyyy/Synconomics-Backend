@@ -2796,6 +2796,14 @@ paths:
         in: formData
         name: stock
         type: integer
+      - description: Min Stock
+        in: formData
+        name: min_stock
+        type: integer
+      - description: Product Image
+        in: formData
+        name: image_url
+        type: file
       produces:
       - application/json
       responses:

@@ -237,7 +237,7 @@ func (h *AuthHandler) UpdateProfile(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid request body")
 	}
 
-	user, err := h.authService.UpdateProfile(userID, req.Name, req.Email)
+	user, err := h.authService.UpdateProfile(userID, req.Name, req.Email, req.Avatar)
 	if err != nil {
 		return helpers.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}

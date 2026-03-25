@@ -35,4 +35,5 @@ type BusinessMetricResponse struct {
 	SalesGrowth   float64         `json:"sales_growth"`
 	CalculatedAt  time.Time       `json:"calculated_at"`
 	CreatedAt     time.Time       `json:"created_at"`
+	UpdatedAt     time.Time       `json:"updated_at"`
 }
