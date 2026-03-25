@@ -42,6 +42,8 @@ func main() {
 		AllowOrigins: "http://localhost:3000, https://api-synconomics.synchronizeteams.com",
 	}))
 
+	app.Static("/public", "./public")
+
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := app.Group("/api")
