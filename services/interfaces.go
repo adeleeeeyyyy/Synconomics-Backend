@@ -11,7 +11,7 @@ type AuthService interface {
 	Login(email, password string) (*models.User, string, error)
 	HandleGoogleCallback(googleUser goth.User) (*models.User, string, error)
 	GetProfile(userID uint) (*models.User, string, error)
-	UpdateProfile(userID uint, name, email string) (*models.User, error)
+	UpdateProfile(userID uint, name, email, avatar string) (*models.User, error)
 }
 
 type ProductService interface {

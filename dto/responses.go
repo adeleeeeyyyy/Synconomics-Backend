@@ -8,7 +8,9 @@ type UserResponse struct {
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	GoogleID  string    `json:"google_id,omitempty"`
+	Avatar    string    `json:"avatar,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type UserBusinessResponse struct {
@@ -18,19 +20,22 @@ type UserBusinessResponse struct {
 
 // Business Management
 type BusinessResponse struct {
-	ID          uint    `json:"id"`
-	UserID      uint    `json:"user_id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Category    string  `json:"category"`
-	Address     string  `json:"address"`
-	Latitude    float32 `json:"latitude"`
-	Longitude   float32 `json:"longitude"`
-	Phone       string  `form:"phone" json:"phone"`
-	Whatsapp    string  `form:"whatsapp" json:"whatsapp"`
-	Instagram   string  `form:"instagram" json:"instagram"`
-	Tiktok      string  `form:"tiktok" json:"tiktok"`
-	Website     string  `form:"website" json:"website"`
+	ID          uint      `json:"id"`
+	UserID      uint      `json:"user_id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Category    string    `json:"category"`
+	LogoURL     string    `json:"logo_url"`
+	Address     string    `json:"address"`
+	Latitude    float32   `json:"latitude"`
+	Longitude   float32   `json:"longitude"`
+	Phone       string    `json:"phone"`
+	Whatsapp    string    `json:"whatsapp"`
+	Instagram   string    `json:"instagram"`
+	Tiktok      string    `json:"tiktok"`
+	Website     string    `json:"website"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type ProductResponse struct {
@@ -43,14 +48,18 @@ type ProductResponse struct {
 	ImageURL    string    `json:"image_url"`
 	MinStock    int       `json:"min_stock"`
 	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type TransactionResponse struct {
 	ID              uint      `json:"id"`
 	BusinessID      uint      `json:"business_id"`
-	Type            string    `json:"type"`
 	TotalAmount     float64   `json:"total_amount"`
+	PaymentMethod   string    `json:"payment_method"`
+	Status          string    `json:"status"`
 	TransactionDate time.Time `json:"transaction_date"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 type ExpenseResponse struct {
@@ -58,8 +67,10 @@ type ExpenseResponse struct {
 	BusinessID  uint      `json:"business_id"`
 	Category    string    `json:"category"`
 	Amount      float64   `json:"amount"`
-	Title		string	  `json:"title"`
+	Title       string    `json:"title"`
 	ExpenseDate time.Time `json:"expense_date"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // AI Features
@@ -68,6 +79,7 @@ type AISessionResponse struct {
 	BusinessID uint      `json:"business_id"`
 	Type       string    `json:"type"`
 	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type AIMessageResponse struct {
@@ -76,6 +88,7 @@ type AIMessageResponse struct {
 	Role      string    `json:"role"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type AIResultResponse struct {
@@ -83,6 +96,7 @@ type AIResultResponse struct {
 	SessionID uint      `json:"session_id"`
 	Result    string    `json:"result"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // Supply Chain
@@ -91,20 +105,19 @@ type SupplyRequestResponse struct {
 	BusinessID  uint      `json:"business_id"`
 	ProductName string    `json:"product_name"`
 	Quantity    int       `json:"quantity"`
-	Description string    `json:"description"`
 	Status      string    `json:"status"`
 	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type SupplyOfferResponse struct {
 	ID          uint      `json:"id"`
 	BusinessID  uint      `json:"business_id"`
+	ProductID   uint      `json:"product_id"`
 	ProductName string    `json:"product_name"`
-	Price       float64   `json:"price"`
 	Quantity    int       `json:"quantity"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
 	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type SupplyMatchResponse struct {
@@ -113,6 +126,7 @@ type SupplyMatchResponse struct {
 	SupplyOfferID   uint      `json:"supply_offer_id"`
 	Status          string    `json:"status"`
 	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 // Community
@@ -122,6 +136,7 @@ type ThreadResponse struct {
 	Title     string        `json:"title"`
 	Content   string        `json:"content"`
 	CreatedAt time.Time     `json:"created_at"`
+	UpdatedAt time.Time     `json:"updated_at"`
 	User      *UserResponse `json:"user,omitempty"`
 }
 
@@ -131,6 +146,7 @@ type ReplyResponse struct {
 	UserID    uint          `json:"user_id"`
 	Content   string        `json:"content"`
 	CreatedAt time.Time     `json:"created_at"`
+	UpdatedAt time.Time     `json:"updated_at"`
 	User      *UserResponse `json:"user,omitempty"`
 }
 
@@ -140,6 +156,7 @@ type ProductSearchLogResponse struct {
 	UserID    uint      `json:"user_id"`
 	Keyword   string    `json:"keyword"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type MarketTrendResponse struct {
@@ -149,4 +166,5 @@ type MarketTrendResponse struct {
 	DemandScore float64   `json:"demand_score"`
 	Location    string    `json:"location"`
 	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

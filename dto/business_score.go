@@ -19,4 +19,5 @@ type BusinessScoreResponse struct {
 	Score      int       `json:"score"`
 	Insight    string    `json:"insight"`
 	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
