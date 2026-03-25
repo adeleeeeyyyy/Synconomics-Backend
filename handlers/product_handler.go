@@ -156,6 +156,8 @@ func (h *ProductHandler) GetProductsByBusiness(c *fiber.Ctx) error {
 // @Param description formData string false "Product Description"
 // @Param price formData number false "Price"
 // @Param stock formData integer false "Stock"
+// @Param min_stock formData integer false "Min Stock"
+// @Param image_url formData file false "Product Image"
 // @Success 200 {object} helpers.Response{data=dto.ProductResponse}
 // @Router /products/{id} [put]
 func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
@@ -169,8 +171,21 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		return helpers.ErrorResponse(c, fiber.StatusNotFound, "product not found")
 	}
 
-	if err := c.BodyParser(&existingProduct); err != nil {
+	var req dto.UpdateProductRequest
+	if err := c.BodyParser(&req); err != nil {
 		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid form input")
+	}
+
+	// Handle optional image upload
+	_, filePath, err := helpers.HandleFileUpload(c, "image_url", "./public/uploads")
+	if err == nil {
+		// If upload success, update the image path
+		existingProduct.ImageURL = filePath
+	}
+
+	// Map updated fields
+	if err := copier.Copy(existingProduct, &req); err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, "failed to map")
 	}
 
 	if err := h.service.UpdateProduct(existingProduct); err != nil {

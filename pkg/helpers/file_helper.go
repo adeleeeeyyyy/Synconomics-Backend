@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"os"
 )
 
 // HandleFileUpload extracts a file from the request, validates it, and saves it to the specified directory.
@@ -48,4 +49,19 @@ func HandleFileUpload(c *fiber.Ctx, formField string, uploadDir string) (string,
 
 	// 6. Return the raw filename and the path (relative or absolute depending on uploadDir)
 	return newFilename, savePath, nil
+}
+
+// DeleteFile removes a file from the filesystem.
+func DeleteFile(filePath string) error {
+	if filePath == "" {
+		return nil
+	}
+	err := os.Remove(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return fmt.Errorf("failed to delete file: %w", err)
+	}
+	return nil
 }

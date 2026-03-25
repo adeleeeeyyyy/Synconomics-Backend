@@ -2,6 +2,7 @@ package services
 
 import (
 	"Synconomics/models"
+	"Synconomics/pkg/helpers"
 	"Synconomics/repositories"
 )
 
@@ -26,6 +27,16 @@ func (s *productService) GetProductById(id uint) (*models.Product, error) {
 }
 
 func (s *productService) UpdateProduct(product *models.Product) error {
+	// 1. Get existing product to compare image URL
+	existing, err := s.repo.FindByID(product.ID)
+	if err == nil && existing.ImageURL != "" && existing.ImageURL != product.ImageURL {
+		// Image URL has changed, delete the old file
+		// Note: We ignore errors from DeleteFile as it's not critical if the old file remains
+		// but we should pass the actual path.
+		// Usually ImageURL is something like "./public/uploads/filename.jpg"
+		helpers.DeleteFile(existing.ImageURL)
+	}
+
 	return s.repo.Update(product)
 }
 
