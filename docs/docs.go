@@ -2204,6 +2204,31 @@ const docTemplate = `{
                 }
             }
         },
+        "/market-trends/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Memicu AI untuk menganalisis log pencarian dan memperbarui tabel tren pasar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "market-trends"
+                ],
+                "summary": "Refresh tren pasar dari log pencarian",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/market-trends/top": {
             "get": {
                 "security": [
@@ -4893,6 +4918,9 @@ const docTemplate = `{
                 },
                 "session_id": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -4910,6 +4938,9 @@ const docTemplate = `{
                 },
                 "session_id": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -4926,6 +4957,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -4962,6 +4996,9 @@ const docTemplate = `{
                 },
                 "total_revenue": {
                     "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -4972,6 +5009,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "category": {
+                    "type": "string"
+                },
+                "created_at": {
                     "type": "string"
                 },
                 "description": {
@@ -4986,6 +5026,9 @@ const docTemplate = `{
                 "latitude": {
                     "type": "number"
                 },
+                "logo_url": {
+                    "type": "string"
+                },
                 "longitude": {
                     "type": "number"
                 },
@@ -4996,6 +5039,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tiktok": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "user_id": {
@@ -5026,6 +5072,9 @@ const docTemplate = `{
                 },
                 "score": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -5345,6 +5394,9 @@ const docTemplate = `{
                 "category": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "expense_date": {
                     "type": "string"
                 },
@@ -5352,6 +5404,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "title": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -5376,6 +5431,9 @@ const docTemplate = `{
                 },
                 "search_count": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -5408,6 +5466,9 @@ const docTemplate = `{
                 },
                 "stock": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -5421,6 +5482,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "keyword": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "user_id": {
@@ -5442,6 +5506,9 @@ const docTemplate = `{
                 },
                 "thread_id": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 },
                 "user": {
                     "$ref": "#/definitions/dto.UserResponse"
@@ -5468,6 +5535,9 @@ const docTemplate = `{
                 },
                 "supply_request_id": {
                     "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -5480,14 +5550,11 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "price": {
-                    "type": "number"
+                "product_id": {
+                    "type": "integer"
                 },
                 "product_name": {
                     "type": "string"
@@ -5495,7 +5562,7 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer"
                 },
-                "status": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -5509,9 +5576,6 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "description": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -5522,6 +5586,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -5541,6 +5608,9 @@ const docTemplate = `{
                 "title": {
                     "type": "string"
                 },
+                "updated_at": {
+                    "type": "string"
+                },
                 "user": {
                     "$ref": "#/definitions/dto.UserResponse"
                 },
@@ -5555,8 +5625,17 @@ const docTemplate = `{
                 "business_id": {
                     "type": "integer"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 },
                 "total_amount": {
                     "type": "number"
@@ -5564,7 +5643,7 @@ const docTemplate = `{
                 "transaction_date": {
                     "type": "string"
                 },
-                "type": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -5637,6 +5716,9 @@ const docTemplate = `{
         "dto.UpdateProfileRequest": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -5763,6 +5845,9 @@ const docTemplate = `{
         "dto.UserResponse": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -5776,6 +5861,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

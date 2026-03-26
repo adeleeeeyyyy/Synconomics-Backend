@@ -483,3 +483,50 @@ func (s *aiService) ChatByRole(userID, businessID uint, sessionType string, mess
 
 	return s.Chat(session.ID, message, token)
 }
+func (s *aiService) AnalyzeMarketTrends(keywords []string) ([]models.MarketTrend, error) {
+	if len(keywords) == 0 {
+		return []models.MarketTrend{}, nil
+	}
+
+	ctx := context.Background()
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	if err != nil {
+		return nil, err
+	}
+	defer client.Close()
+
+	model := client.GenerativeModel("gemini-2.5-flash")
+	model.ResponseMIMEType = "application/json"
+	
+	// Structured prompt for trend analysis
+	prompt := fmt.Sprintf(`Analyze the following search keywords collected from various users. 
+	1. Normalize them into official product names.
+	2. Group similar items.
+	3. Assign a 'search_count' (estimate relative popularity based on input frequency).
+	4. Assign a 'demand_score' (0.0 to 10.0) based on current global/local trends.
+	5. Identify a 'location' if possible, otherwise use 'Global' or 'Indonesia'.
+	
+	Keywords: %s
+	
+	Return a JSON array of objects with keys: "product_name", "search_count", "demand_score", "location".`, strings.Join(keywords, ", "))
+
+	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonOutput string
+	for _, part := range resp.Candidates[0].Content.Parts {
+		if textPart, ok := part.(genai.Text); ok {
+			jsonOutput += string(textPart)
+		}
+	}
+
+	var trends []models.MarketTrend
+	if err := json.Unmarshal([]byte(jsonOutput), &trends); err != nil {
+		return nil, fmt.Errorf("failed to parse AI response: %v, raw: %s", err, jsonOutput)
+	}
+
+	return trends, nil
+}

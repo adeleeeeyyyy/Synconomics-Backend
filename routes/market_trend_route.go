@@ -11,7 +11,11 @@ import (
 
 func SetupMarketTrendRoutes(api fiber.Router) {
 	repo := repositories.NewMarketTrendRepository(config.DB)
-	service := services.NewMarketTrendService(repo)
+	aiRepo := repositories.NewAIRepository(config.DB)
+	logRepo := repositories.NewProductSearchLogRepository(config.DB)
+	
+	aiService := services.NewAIService(aiRepo)
+	service := services.NewMarketTrendService(repo, aiService, logRepo)
 	handler := handlers.NewMarketTrendHandler(service)
 
 	trends := api.Group("/market-trends")
@@ -20,6 +24,7 @@ func SetupMarketTrendRoutes(api fiber.Router) {
 	trends.Post("/", handler.CreateTrend)
 	trends.Get("/", handler.GetAllTrends)
 	trends.Get("/top", handler.GetTopTrends)
+	trends.Post("/refresh", handler.RefreshTrends)
 	trends.Get("/:id", handler.GetTrendById)
 	trends.Put("/:id", handler.UpdateTrend)
 	trends.Delete("/:id", handler.DeleteTrend)

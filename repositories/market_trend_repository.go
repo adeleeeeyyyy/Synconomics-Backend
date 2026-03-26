@@ -46,3 +46,16 @@ func (r *marketTrendRepository) FindTopTen() ([]models.MarketTrend, error) {
 	err := r.db.Order("demand_score desc").Limit(10).Find(&trends).Error
 	return trends, err
 }
+func (r *marketTrendRepository) ReplaceAll(trends []models.MarketTrend) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.MarketTrend{}).Error; err != nil {
+			return err
+		}
+		if len(trends) > 0 {
+			if err := tx.Create(&trends).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}

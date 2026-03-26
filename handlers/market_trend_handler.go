@@ -176,3 +176,19 @@ func (h *MarketTrendHandler) GetTopTrends(c *fiber.Ctx) error {
 
 	return helpers.SuccessResponse(c, fiber.StatusOK, "top 10 market trends fetched", resp)
 }
+
+// RefreshTrends
+// @Summary Refresh tren pasar dari log pencarian
+// @Description Memicu AI untuk menganalisis log pencarian dan memperbarui tabel tren pasar
+// @Tags market-trends
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} helpers.Response
+// @Router /market-trends/refresh [post]
+func (h *MarketTrendHandler) RefreshTrends(c *fiber.Ctx) error {
+	if err := h.service.RefreshTrendsFromLogs(); err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "market trends refreshed from logs", nil)
+}

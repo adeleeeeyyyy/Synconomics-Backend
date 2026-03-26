@@ -35,3 +35,13 @@ func (r *productSearchLogRepository) FindByUserID(userID uint) ([]models.Product
 	err := r.db.Preload("User").Where("user_id = ?", userID).Find(&logs).Error
 	return logs, err
 }
+func (r *productSearchLogRepository) GetRecentUniqueKeywords(limit int) ([]string, error) {
+	var keywords []string
+	err := r.db.Model(&models.ProductSearchLog{}).
+		Select("keyword").
+		Distinct("keyword").
+		Limit(limit).
+		Order("created_at desc").
+		Pluck("keyword", &keywords).Error
+	return keywords, err
+}

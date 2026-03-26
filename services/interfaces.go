@@ -66,6 +66,7 @@ type AIService interface {
 	GetSessionMessages(sessionID uint) ([]models.AIMessage, error)
 	GetSessionResult(sessionID uint) (*models.AIResult, error)
 	ChatByRole(userID, businessID uint, sessionType string, message string, token string) (*models.AIMessage, error)
+	AnalyzeMarketTrends(keywords []string) ([]models.MarketTrend, error)
 }
 
 type SupplyRequestService interface {
@@ -127,6 +128,7 @@ type MarketTrendService interface {
 	UpdateTrend(trend *models.MarketTrend) error
 	DeleteTrend(id uint) error
 	GetTopTenTrends() ([]models.MarketTrend, error)
+	RefreshTrendsFromLogs() error
 }
 
 type BusinessMetricService interface {

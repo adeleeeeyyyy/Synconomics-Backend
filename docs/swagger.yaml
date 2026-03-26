@@ -12,6 +12,8 @@ definitions:
         type: string
       session_id:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.AIResultResponse:
     properties:
@@ -23,6 +25,8 @@ definitions:
         type: string
       session_id:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.AISessionResponse:
     properties:
@@ -33,6 +37,8 @@ definitions:
       id:
         type: integer
       type:
+        type: string
+      updated_at:
         type: string
     type: object
   dto.BusinessMetricResponse:
@@ -57,12 +63,16 @@ definitions:
         type: number
       total_revenue:
         type: number
+      updated_at:
+        type: string
     type: object
   dto.BusinessResponse:
     properties:
       address:
         type: string
       category:
+        type: string
+      created_at:
         type: string
       description:
         type: string
@@ -72,6 +82,8 @@ definitions:
         type: string
       latitude:
         type: number
+      logo_url:
+        type: string
       longitude:
         type: number
       name:
@@ -79,6 +91,8 @@ definitions:
       phone:
         type: string
       tiktok:
+        type: string
+      updated_at:
         type: string
       user_id:
         type: integer
@@ -99,6 +113,8 @@ definitions:
         type: string
       score:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.ChatRequest:
     properties:
@@ -316,11 +332,15 @@ definitions:
         type: integer
       category:
         type: string
+      created_at:
+        type: string
       expense_date:
         type: string
       id:
         type: integer
       title:
+        type: string
+      updated_at:
         type: string
     type: object
   dto.MarketTrendResponse:
@@ -337,6 +357,8 @@ definitions:
         type: string
       search_count:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.ProductResponse:
     properties:
@@ -358,6 +380,8 @@ definitions:
         type: number
       stock:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.ProductSearchLogResponse:
     properties:
@@ -366,6 +390,8 @@ definitions:
       id:
         type: integer
       keyword:
+        type: string
+      updated_at:
         type: string
       user_id:
         type: integer
@@ -380,6 +406,8 @@ definitions:
         type: integer
       thread_id:
         type: integer
+      updated_at:
+        type: string
       user:
         $ref: '#/definitions/dto.UserResponse'
       user_id:
@@ -397,6 +425,8 @@ definitions:
         type: integer
       supply_request_id:
         type: integer
+      updated_at:
+        type: string
     type: object
   dto.SupplyOfferResponse:
     properties:
@@ -404,17 +434,15 @@ definitions:
         type: integer
       created_at:
         type: string
-      description:
-        type: string
       id:
         type: integer
-      price:
-        type: number
+      product_id:
+        type: integer
       product_name:
         type: string
       quantity:
         type: integer
-      status:
+      updated_at:
         type: string
     type: object
   dto.SupplyRequestResponse:
@@ -423,8 +451,6 @@ definitions:
         type: integer
       created_at:
         type: string
-      description:
-        type: string
       id:
         type: integer
       product_name:
@@ -432,6 +458,8 @@ definitions:
       quantity:
         type: integer
       status:
+        type: string
+      updated_at:
         type: string
     type: object
   dto.ThreadResponse:
@@ -444,6 +472,8 @@ definitions:
         type: integer
       title:
         type: string
+      updated_at:
+        type: string
       user:
         $ref: '#/definitions/dto.UserResponse'
       user_id:
@@ -453,13 +483,19 @@ definitions:
     properties:
       business_id:
         type: integer
+      created_at:
+        type: string
       id:
         type: integer
+      payment_method:
+        type: string
+      status:
+        type: string
       total_amount:
         type: number
       transaction_date:
         type: string
-      type:
+      updated_at:
         type: string
     type: object
   dto.UpdateBusinessMetricRequest:
@@ -506,6 +542,8 @@ definitions:
     type: object
   dto.UpdateProfileRequest:
     properties:
+      avatar:
+        type: string
       email:
         type: string
       name:
@@ -589,6 +627,8 @@ definitions:
     type: object
   dto.UserResponse:
     properties:
+      avatar:
+        type: string
       created_at:
         type: string
       email:
@@ -598,6 +638,8 @@ definitions:
       id:
         type: integer
       name:
+        type: string
+      updated_at:
         type: string
     type: object
   gorm.DeletedAt:
@@ -2510,6 +2552,22 @@ paths:
       security:
       - BearerAuth: []
       summary: Perbarui tren pasar
+      tags:
+      - market-trends
+  /market-trends/refresh:
+    post:
+      description: Memicu AI untuk menganalisis log pencarian dan memperbarui tabel
+        tren pasar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.Response'
+      security:
+      - BearerAuth: []
+      summary: Refresh tren pasar dari log pencarian
       tags:
       - market-trends
   /market-trends/top:

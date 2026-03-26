@@ -116,6 +116,7 @@ type ProductSearchLogRepository interface {
 	FindAll() ([]models.ProductSearchLog, error)
 	FindByID(id uint) (*models.ProductSearchLog, error)
 	FindByUserID(userID uint) ([]models.ProductSearchLog, error)
+	GetRecentUniqueKeywords(limit int) ([]string, error)
 }
 
 type MarketTrendRepository interface {
@@ -125,6 +126,7 @@ type MarketTrendRepository interface {
 	Update(trend *models.MarketTrend) error
 	Delete(id uint) error
 	FindTopTen() ([]models.MarketTrend, error)
+	ReplaceAll(trends []models.MarketTrend) error
 }
 
 type BusinessMetricRepository interface {
