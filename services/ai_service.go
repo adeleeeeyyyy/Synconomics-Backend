@@ -621,8 +621,8 @@ func (s *aiService) AuditBusinessReport(userID, businessID uint, token string) (
 	model.ResponseMIMEType = "application/json"
 
 	// 2. Invoke Analyzer Agent
-	analyzerSys := `You are a Senior Financial Auditor. Analyze the provided metrics and identify 3 key trends or risks. 
-Output ONLY valid JSON: { "analysis": "bullet points as string" }. Keep it concise.`
+	analyzerSys := `Anda adalah Senior Financial Auditor. Analisis metrik yang diberikan dan identifikasi 3 tren atau risiko utama. 
+Output HARUS berupa JSON valid: { "analysis": "poin-poin dalam bentuk string" }. Buatlah ringkas dan gunakan Bahasa Indonesia.`
 	analyzerResp, err := s.callAIWithRetry(ctx, model, analyzerSys, string(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("analyzer agent failed: %v", err)
@@ -633,8 +633,8 @@ Output ONLY valid JSON: { "analysis": "bullet points as string" }. Keep it conci
 	analysis := analysisMap["analysis"]
 
 	// 3. Invoke Strategist Agent
-	strategistSys := `You are a Business Strategist. Based on the analysis provided, give 3 high-impact recommendations (Cost, Pricing, or Growth).
-Output ONLY valid JSON: { "strategy": "recommendations as string" }. Be practical.`
+	strategistSys := `Anda adalah Business Strategist. Berdasarkan analisis yang diberikan, berikan 3 rekomendasi berdampak tinggi (Biaya, Harga, atau Pertumbuhan).
+Output HARUS berupa JSON valid: { "strategy": "rekomendasi dalam bentuk string" }. Jadilah praktis dan gunakan Bahasa Indonesia.`
 	strategistResp, err := s.callAIWithRetry(ctx, model, strategistSys, analysis)
 	if err != nil {
 		return "", fmt.Errorf("strategist agent failed: %v", err)
@@ -645,7 +645,7 @@ Output ONLY valid JSON: { "strategy": "recommendations as string" }. Be practica
 	strategy := strategyMap["strategy"]
 
 	// 4. Combine Results into Markdown
-	finalReport := fmt.Sprintf("# Financial Audit: %s\n\n## 1. Key Metrics\n- Revenue: %.2f\n- Net Profit: %.2f\n- Margin: %.1f%%\n- Inventory Value: %.2f\n\n## 2. Analysis\n%s\n\n## 3. Strategic Action Plan\n%s", 
+	finalReport := fmt.Sprintf("# Audit Finansial: %s\n\n## 1. Metrik Utama\n- Pendapatan: %.2f\n- Laba Bersih: %.2f\n- Margin: %.1f%%\n- Nilai Inventaris: %.2f\n\n## 2. Analisis\n%s\n\n## 3. Rencana Tindakan Strategis\n%s", 
 		business.Name, auditData.Metrics.Revenue, auditData.Metrics.NetProfit, auditData.Metrics.NetProfitMargin, auditData.Metrics.InventoryValue, analysis, strategy)
 
 	return finalReport, nil

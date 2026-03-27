@@ -37,7 +37,7 @@ func CalculateAuditData(
 ) AuditData {
 	data := AuditData{
 		BusinessName: business.Name,
-		Period:       "Last 30 Days",
+		Period:       "30 Hari Terakhir",
 	}
 
 	// 1. Calculate Revenue and Transaction Stats
