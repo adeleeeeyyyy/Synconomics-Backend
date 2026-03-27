@@ -548,6 +548,39 @@ func (s *aiService) AnalyzeMarketTrends(keywords []string) ([]models.MarketTrend
 	return trends, nil
 }
 
+func (s *aiService) callAIWithRetry(ctx context.Context, model *genai.GenerativeModel, systemInstruction string, userPrompt string) (string, error) {
+	model.SystemInstruction = &genai.Content{Parts: []genai.Part{genai.Text(systemInstruction)}}
+
+	var lastErr error
+	backoff := 2 * time.Second
+
+	for i := 0; i < 3; i++ {
+		resp, err := model.GenerateContent(ctx, genai.Text(userPrompt))
+		if err == nil {
+			if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
+				return "", fmt.Errorf("empty AI response")
+			}
+			var resultText string
+			for _, part := range resp.Candidates[0].Content.Parts {
+				if textPart, ok := part.(genai.Text); ok {
+					resultText += string(textPart)
+				}
+			}
+			return resultText, nil
+		}
+
+		lastErr = err
+		if strings.Contains(err.Error(), "429") || strings.Contains(err.Error(), "quota") {
+			fmt.Printf("DEBUG: AI Rate Limit (429), retrying in %v (attempt %d/3)...\n", backoff, i+1)
+			time.Sleep(backoff)
+			backoff *= 2
+			continue
+		}
+		return "", err
+	}
+	return "", fmt.Errorf("AI failed after 3 attempts: %v", lastErr)
+}
+
 func (s *aiService) AuditBusinessReport(userID, businessID uint, token string) (string, error) {
 	business, err := s.businessRepo.FindByID(businessID)
 	if err != nil {
@@ -572,16 +605,9 @@ func (s *aiService) AuditBusinessReport(userID, businessID uint, token string) (
 		return "", fmt.Errorf("failed to fetch products: %v", err)
 	}
 
-	// Prepare data for AI
-	data := map[string]interface{}{
-		"business":     business,
-		"transactions": transactions,
-		"expenses":     expenses,
-		"products":     products,
-		"period":       "last 30 days",
-	}
-
-	jsonData, _ := json.MarshalIndent(data, "", "  ")
+	// 1. Move Computation to Backend (Go)
+	auditData := CalculateAuditData(business, transactions, expenses, products)
+	jsonData, _ := json.MarshalIndent(auditData, "", "  ")
 
 	ctx := context.Background()
 	apiKey := os.Getenv("GEMINI_API_KEY")
@@ -592,41 +618,35 @@ func (s *aiService) AuditBusinessReport(userID, businessID uint, token string) (
 	defer client.Close()
 
 	model := client.GenerativeModel("gemini-2.5-flash")
+	model.ResponseMIMEType = "application/json"
 
-	systemInstruction := `Role: You are a Senior Financial Business Consultant and Auditor. Your expertise lies in analyzing Point of Sale (POS) data and financial statements to assess a business's health and provide high-impact strategic recommendations.
-
-Objective: Analyze the provided 30-day financial report data and generate a comprehensive Financial Audit Result. You must evaluate the business across four key pillars and provide actionable strategic advice.
-
-Analysis Framework:
-You must calculate and interpret the following metrics based on the data provided:
-1. Liquidity: Current Ratio, Quick Ratio.
-2. Solvency: Debt to Equity Ratio.
-3. Profitability: Gross Profit Margin, Net Profit Margin.
-4. Efficiency: Inventory Turnover, Asset Turnover.
-
-Strategic Recommendations:
-Based on the audit, provide a "Strategic Action Plan" consisting of:
-- Cost Reduction Strategy: Identify unnecessary expenditures and provide specific ways to optimize operational costs (OPEX).
-- Pricing Optimization: Suggest adjustments to pricing models based on profit margins and sales velocity.
-- Investment Priority: Recommend where to allocate capital to maximize business growth.
-
-Tone and Style: Professional, analytical, objective, and constructive. Use clear headings and bullet points for readability. If certain data points are missing, provide an estimate or flag what is needed.`
-
-	model.SystemInstruction = &genai.Content{Parts: []genai.Part{genai.Text(systemInstruction)}}
-
-	prompt := fmt.Sprintf("Analyze the following business data for the last 30 days and provide the audit result:\n\n%s", string(jsonData))
-
-	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
+	// 2. Invoke Analyzer Agent
+	analyzerSys := `You are a Senior Financial Auditor. Analyze the provided metrics and identify 3 key trends or risks. 
+Output ONLY valid JSON: { "analysis": "bullet points as string" }. Keep it concise.`
+	analyzerResp, err := s.callAIWithRetry(ctx, model, analyzerSys, string(jsonData))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("analyzer agent failed: %v", err)
 	}
 
-	var resultText string
-	for _, part := range resp.Candidates[0].Content.Parts {
-		if textPart, ok := part.(genai.Text); ok {
-			resultText += string(textPart)
-		}
+	var analysisMap map[string]string
+	json.Unmarshal([]byte(analyzerResp), &analysisMap)
+	analysis := analysisMap["analysis"]
+
+	// 3. Invoke Strategist Agent
+	strategistSys := `You are a Business Strategist. Based on the analysis provided, give 3 high-impact recommendations (Cost, Pricing, or Growth).
+Output ONLY valid JSON: { "strategy": "recommendations as string" }. Be practical.`
+	strategistResp, err := s.callAIWithRetry(ctx, model, strategistSys, analysis)
+	if err != nil {
+		return "", fmt.Errorf("strategist agent failed: %v", err)
 	}
 
-	return resultText, nil
+	var strategyMap map[string]string
+	json.Unmarshal([]byte(strategistResp), &strategyMap)
+	strategy := strategyMap["strategy"]
+
+	// 4. Combine Results into Markdown
+	finalReport := fmt.Sprintf("# Financial Audit: %s\n\n## 1. Key Metrics\n- Revenue: %.2f\n- Net Profit: %.2f\n- Margin: %.1f%%\n- Inventory Value: %.2f\n\n## 2. Analysis\n%s\n\n## 3. Strategic Action Plan\n%s", 
+		business.Name, auditData.Metrics.Revenue, auditData.Metrics.NetProfit, auditData.Metrics.NetProfitMargin, auditData.Metrics.InventoryValue, analysis, strategy)
+
+	return finalReport, nil
 }
