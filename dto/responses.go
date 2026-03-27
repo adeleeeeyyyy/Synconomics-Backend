@@ -27,8 +27,8 @@ type BusinessResponse struct {
 	Category    string    `json:"category"`
 	LogoURL     string    `json:"logo_url"`
 	Address     string    `json:"address"`
-	Latitude    float32   `json:"latitude"`
-	Longitude   float32   `json:"longitude"`
+	Latitude    float64   `json:"latitude"`
+	Longitude   float64   `json:"longitude"`
 	Phone       string    `json:"phone"`
 	Whatsapp    string    `json:"whatsapp"`
 	Instagram   string    `json:"instagram"`

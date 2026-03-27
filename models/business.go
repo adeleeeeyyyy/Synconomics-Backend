@@ -20,8 +20,8 @@ type Business struct {
 	Category    string  `json:"category" gorm:"type:varchar(100)"`
 	LogoURL     string  `json:"logo_url" gorm:"type:varchar(255)"`
 	Address     string  `json:"address" gorm:"type:varchar(255)"`
-	Latitude    float32 `json:"latitude" gorm:"type:float"`
-	Longitude   float32 `json:"longitude" gorm:"type:float"`
+	Latitude    float64 `json:"latitude" gorm:"type:double"`
+	Longitude   float64 `json:"longitude" gorm:"type:double"`
 	Phone       string  `json:"phone" gorm:"type:varchar(255)"`
 	Whatsapp    string  `json:"whatsapp" gorm:"type:varchar(255)"`
 	Instagram   string  `json:"instagram" gorm:"type:varchar(255)"`
