@@ -12,8 +12,12 @@ import (
 func SetupAIRoutes(api fiber.Router) {
 	// Repositories
 	aiRepo := repositories.NewAIRepository(config.DB)
+	transactionRepo := repositories.NewTransactionRepository(config.DB)
+	expenseRepo := repositories.NewExpenseRepository(config.DB)
+	businessRepo := repositories.NewBusinessRepository(config.DB)
+	productRepo := repositories.NewProductRepository(config.DB)
 
-	aiService := services.NewAIService(aiRepo)
+	aiService := services.NewAIService(aiRepo, transactionRepo, expenseRepo, businessRepo, productRepo)
 	aiHandler := handlers.NewAIHandler(aiService)
 
 	aiRoutes := api.Group("/ai")
@@ -30,4 +34,7 @@ func SetupAIRoutes(api fiber.Router) {
 	aiRoutes.Post("/chat/idea-generation", aiHandler.ChatIdeaGeneration)
 	aiRoutes.Post("/chat/validation", aiHandler.ChatValidation)
 	aiRoutes.Post("/chat/strategy", aiHandler.ChatStrategy)
+
+	// Business Audit
+	aiRoutes.Post("/audit/:business_id", aiHandler.AuditBusiness)
 }

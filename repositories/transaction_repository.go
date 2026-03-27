@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"Synconomics/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -41,5 +42,11 @@ func (r *transactionRepository) Delete(id uint) error {
 func (r *transactionRepository) FindByBusinessID(businessID uint) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	err := r.db.Where("business_id = ?", businessID).Preload("TransactionItems").Find(&transactions).Error
+	return transactions, err
+}
+
+func (r *transactionRepository) FindByBusinessIDAndDateRange(businessID uint, startDate, endDate time.Time) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := r.db.Where("business_id = ? AND transaction_date BETWEEN ? AND ?", businessID, startDate, endDate).Preload("TransactionItems").Find(&transactions).Error
 	return transactions, err
 }

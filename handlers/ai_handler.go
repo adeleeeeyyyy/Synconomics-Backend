@@ -209,3 +209,36 @@ func (h *AIHandler) chatByRole(c *fiber.Ctx, sessionType string) error {
 
 	return helpers.SuccessResponse(c, fiber.StatusOK, "ai message replied", resp)
 }
+
+// AuditBusiness
+// @Summary Audit laporan bisnis user via AI
+// @Description Menganalisis data transaksi dan pengeluaran 30 hari terakhir untuk memberikan audit finansial.
+// @Tags ai
+// @Produce json
+// @Security BearerAuth
+// @Param business_id path int true "Business ID"
+// @Success 200 {object} helpers.Response{data=string}
+// @Router /ai/audit/{business_id} [post]
+func (h *AIHandler) AuditBusiness(c *fiber.Ctx) error {
+	userID, ok := c.Locals("userID").(uint)
+	if !ok {
+		return helpers.ErrorResponse(c, fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	businessID, err := strconv.ParseUint(c.Params("business_id"), 10, 32)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusBadRequest, "invalid business id")
+	}
+
+	token := c.Get("Authorization")
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	auditResult, err := h.service.AuditBusinessReport(userID, uint(businessID), token)
+	if err != nil {
+		return helpers.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return helpers.SuccessResponse(c, fiber.StatusOK, "business audit completed", auditResult)
+}

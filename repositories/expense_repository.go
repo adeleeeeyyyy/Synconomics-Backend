@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"Synconomics/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -33,6 +34,12 @@ func (r *expenseRepository) FindByID(id uint) (*models.Expense, error) {
 func (r *expenseRepository) FindByBusinessID(businessID uint) ([]models.Expense, error) {
 	var expenses []models.Expense
 	err := r.db.Preload("Business").Where("business_id = ?", businessID).Find(&expenses).Error
+	return expenses, err
+}
+
+func (r *expenseRepository) FindByBusinessIDAndDateRange(businessID uint, startDate, endDate time.Time) ([]models.Expense, error) {
+	var expenses []models.Expense
+	err := r.db.Where("business_id = ? AND created_at BETWEEN ? AND ?", businessID, startDate, endDate).Preload("Business").Find(&expenses).Error
 	return expenses, err
 }
 

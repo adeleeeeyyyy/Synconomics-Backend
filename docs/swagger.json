@@ -9,6 +9,52 @@
     },
     "basePath": "/api",
     "paths": {
+        "/ai/audit/{business_id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Menganalisis data transaksi dan pengeluaran 30 hari terakhir untuk memberikan audit finansial.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Audit laporan bisnis user via AI",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Business ID",
+                        "name": "business_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/helpers.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ai/chat/idea-generation": {
             "post": {
                 "security": [

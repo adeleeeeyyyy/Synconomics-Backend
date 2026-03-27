@@ -12,9 +12,13 @@ import (
 func SetupMarketTrendRoutes(api fiber.Router) {
 	repo := repositories.NewMarketTrendRepository(config.DB)
 	aiRepo := repositories.NewAIRepository(config.DB)
+	transactionRepo := repositories.NewTransactionRepository(config.DB)
+	expenseRepo := repositories.NewExpenseRepository(config.DB)
+	businessRepo := repositories.NewBusinessRepository(config.DB)
+	productRepo := repositories.NewProductRepository(config.DB)
 	logRepo := repositories.NewProductSearchLogRepository(config.DB)
 	
-	aiService := services.NewAIService(aiRepo)
+	aiService := services.NewAIService(aiRepo, transactionRepo, expenseRepo, businessRepo, productRepo)
 	service := services.NewMarketTrendService(repo, aiService, logRepo)
 	handler := handlers.NewMarketTrendHandler(service)
 

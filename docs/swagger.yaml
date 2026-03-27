@@ -1176,6 +1176,33 @@ info:
   title: Synconomics API
   version: "1.0"
 paths:
+  /ai/audit/{business_id}:
+    post:
+      description: Menganalisis data transaksi dan pengeluaran 30 hari terakhir untuk
+        memberikan audit finansial.
+      parameters:
+      - description: Business ID
+        in: path
+        name: business_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/helpers.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Audit laporan bisnis user via AI
+      tags:
+      - ai
   /ai/chat/idea-generation:
     post:
       consumes:

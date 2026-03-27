@@ -4,6 +4,7 @@ import (
 	"Synconomics/models"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -43,6 +44,11 @@ func (m *MockTransactionRepository) Delete(id uint) error {
 
 func (m *MockTransactionRepository) FindByBusinessID(businessID uint) ([]models.Transaction, error) {
 	args := m.Called(businessID)
+	return args.Get(0).([]models.Transaction), args.Error(1)
+}
+
+func (m *MockTransactionRepository) FindByBusinessIDAndDateRange(businessID uint, startDate, endDate time.Time) ([]models.Transaction, error) {
+	args := m.Called(businessID, startDate, endDate)
 	return args.Get(0).([]models.Transaction), args.Error(1)
 }
 

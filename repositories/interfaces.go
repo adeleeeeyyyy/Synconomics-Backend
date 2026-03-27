@@ -1,6 +1,9 @@
 package repositories
 
-import "Synconomics/models"
+import (
+	"Synconomics/models"
+	"time"
+)
 
 type UserRepository interface{
 	FindByEmail(email string) (*models.User, error)
@@ -35,6 +38,7 @@ type TransactionRepository interface {
 	Update(transaction *models.Transaction) error
 	Delete(id uint) error
 	FindByBusinessID(businessID uint) ([]models.Transaction, error)
+	FindByBusinessIDAndDateRange(businessID uint, startDate, endDate time.Time) ([]models.Transaction, error)
 }
 
 type TransactionItemRepository interface {
@@ -53,6 +57,7 @@ type ExpenseRepository interface {
 	FindByBusinessID(businessID uint) ([]models.Expense, error)
 	Update(expense *models.Expense) error
 	Delete(id uint) error
+	FindByBusinessIDAndDateRange(businessID uint, startDate, endDate time.Time) ([]models.Expense, error)
 }
 
 type AIRepository interface {

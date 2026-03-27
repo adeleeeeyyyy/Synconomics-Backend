@@ -2,6 +2,7 @@ package services
 
 import (
 	"Synconomics/models"
+	"time"
 
 	"github.com/markbates/goth"
 )
@@ -37,8 +38,9 @@ type TransactionService interface {
 	GetAllTransactions() ([]models.Transaction, error)
 	GetTransactionById(id uint) (*models.Transaction, error)
 	UpdateTransaction(transaction *models.Transaction) error
-	DeleteTransaction(id uint) error 
+	DeleteTransaction(id uint) error
 	GetTransactionsByBusinessId(businessID uint) ([]models.Transaction, error)
+	GetTransactionsByDateRange(businessID uint, startDate, endDate time.Time) ([]models.Transaction, error)
 }
 
 type TransactionItemService interface {
@@ -67,6 +69,7 @@ type AIService interface {
 	GetSessionResult(sessionID uint) (*models.AIResult, error)
 	ChatByRole(userID, businessID uint, sessionType string, message string, token string) (*models.AIMessage, error)
 	AnalyzeMarketTrends(keywords []string) ([]models.MarketTrend, error)
+	AuditBusinessReport(userID, businessID uint, token string) (string, error)
 }
 
 type SupplyRequestService interface {

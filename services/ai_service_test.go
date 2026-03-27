@@ -3,6 +3,7 @@ package services
 import (
 	"Synconomics/models"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -61,16 +62,58 @@ func (m *MockAIRepository) GetLatestSession(userID, businessID uint, sessionType
 	return nil, args.Error(1)
 }
 
+type MockTransactionRepo struct{ mock.Mock }
+
+func (m *MockTransactionRepo) Create(tx *models.Transaction) error { return nil }
+func (m *MockTransactionRepo) FindAll() ([]models.Transaction, error) { return nil, nil }
+func (m *MockTransactionRepo) FindByID(id uint) (*models.Transaction, error) { return nil, nil }
+func (m *MockTransactionRepo) Update(tx *models.Transaction) error { return nil }
+func (m *MockTransactionRepo) Delete(id uint) error { return nil }
+func (m *MockTransactionRepo) FindByBusinessID(id uint) ([]models.Transaction, error) { return nil, nil }
+func (m *MockTransactionRepo) FindByBusinessIDAndDateRange(id uint, s, e time.Time) ([]models.Transaction, error) {
+	return nil, nil
+}
+
+type MockExpenseRepo struct{ mock.Mock }
+
+func (m *MockExpenseRepo) Create(e *models.Expense) error { return nil }
+func (m *MockExpenseRepo) FindAll() ([]models.Expense, error) { return nil, nil }
+func (m *MockExpenseRepo) FindByID(id uint) (*models.Expense, error) { return nil, nil }
+func (m *MockExpenseRepo) FindByBusinessID(id uint) ([]models.Expense, error) { return nil, nil }
+func (m *MockExpenseRepo) Update(e *models.Expense) error { return nil }
+func (m *MockExpenseRepo) Delete(id uint) error { return nil }
+func (m *MockExpenseRepo) FindByBusinessIDAndDateRange(id uint, s, e time.Time) ([]models.Expense, error) {
+	return nil, nil
+}
+
+type MockBusinessRepo struct{ mock.Mock }
+
+func (m *MockBusinessRepo) Create(b *models.Business) error { return nil }
+func (m *MockBusinessRepo) FindAll() ([]models.Business, error) { return nil, nil }
+func (m *MockBusinessRepo) FindByID(id uint) (*models.Business, error) { return nil, nil }
+func (m *MockBusinessRepo) Update(b *models.Business) error { return nil }
+func (m *MockBusinessRepo) Delete(id uint) error { return nil }
+func (m *MockBusinessRepo) FindByUserID(id uint) ([]models.Business, error) { return nil, nil }
+
+type MockProductRepo struct{ mock.Mock }
+
+func (m *MockProductRepo) Create(p *models.Product) error { return nil }
+func (m *MockProductRepo) FindAll() ([]models.Product, error) { return nil, nil }
+func (m *MockProductRepo) FindByID(id uint) (*models.Product, error) { return nil, nil }
+func (m *MockProductRepo) Update(p *models.Product) error { return nil }
+func (m *MockProductRepo) Delete(id uint) error { return nil }
+func (m *MockProductRepo) FindByBusinessID(id uint) ([]models.Product, error) { return nil, nil }
+
 func TestNewAIService(t *testing.T) {
 	mockRepo := new(MockAIRepository)
-	service := NewAIService(mockRepo)
+	service := NewAIService(mockRepo, &MockTransactionRepo{}, &MockExpenseRepo{}, &MockBusinessRepo{}, &MockProductRepo{})
 
 	assert.NotNil(t, service)
 }
 
 func TestCreateSession(t *testing.T) {
 	mockRepo := new(MockAIRepository)
-	service := NewAIService(mockRepo)
+	service := NewAIService(mockRepo, &MockTransactionRepo{}, &MockExpenseRepo{}, &MockBusinessRepo{}, &MockProductRepo{})
 
 	session := &models.AISession{UserID: 1, BusinessID: 1, Type: models.IdeaGeneration}
 	mockRepo.On("CreateSession", session).Return(nil)

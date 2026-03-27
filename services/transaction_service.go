@@ -3,6 +3,7 @@ package services
 import (
 	"Synconomics/models"
 	"Synconomics/repositories"
+	"time"
 )
 
 type transactionService struct {
@@ -35,4 +36,8 @@ func (s *transactionService) DeleteTransaction(id uint) error {
 
 func (s *transactionService) GetTransactionsByBusinessId(businessID uint) ([]models.Transaction, error) {
 	return s.repo.FindByBusinessID(businessID)
+}
+
+func (s *transactionService) GetTransactionsByDateRange(businessID uint, startDate, endDate time.Time) ([]models.Transaction, error) {
+	return s.repo.FindByBusinessIDAndDateRange(businessID, startDate, endDate)
 }

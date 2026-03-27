@@ -3,6 +3,7 @@ package services
 import (
 	"Synconomics/models"
 	"Synconomics/repositories"
+	"time"
 )
 
 type expenseService struct {
@@ -35,4 +36,8 @@ func (s *expenseService) UpdateExpense(expense *models.Expense) error {
 
 func (s *expenseService) DeleteExpense(id uint) error {
 	return s.repo.Delete(id)
+}
+
+func (s *expenseService) GetExpensesByDateRange(businessID uint, startDate, endDate time.Time) ([]models.Expense, error) {
+	return s.repo.FindByBusinessIDAndDateRange(businessID, startDate, endDate)
 }
