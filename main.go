@@ -39,7 +39,7 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000, https://api-synconomics.synchronizeteams.com",
+		AllowOrigins: "http://localhost:3000, https://api-synconomics.synchronizeteams.com, https://synconomics.synchronizeteams.com",
 	}))
 
 	app.Static("/public", "./public")
