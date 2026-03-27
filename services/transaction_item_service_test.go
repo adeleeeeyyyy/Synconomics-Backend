@@ -48,21 +48,28 @@ func (m *MockTransactionItemRepository) Delete(id uint) error {
 
 func TestCreateTransactionItem_Success(t *testing.T) {
 	mockRepo := new(MockTransactionItemRepository)
-	service := NewTransactionItemService(mockRepo)
+	mockProductRepo := new(MockProductRepository)
+	service := NewTransactionItemService(mockRepo, mockProductRepo)
 
 	itemInput := &models.TransactionItem{TransactionID: 1, ProductID: 1, Quantity: 2, Price: 30000}
+	product := &models.Product{Name: "Kopi", Stock: 10}
 
+	mockProductRepo.On("FindByID", uint(1)).Return(product, nil)
+	mockProductRepo.On("Update", mock.Anything).Return(nil)
 	mockRepo.On("Create", itemInput).Return(nil)
 
 	err := service.CreateTransactionItem(itemInput)
 
 	assert.NoError(t, err)
+	assert.Equal(t, 8, product.Stock)
 	mockRepo.AssertExpectations(t)
+	mockProductRepo.AssertExpectations(t)
 }
 
 func TestGetAllTransactionItems_Success(t *testing.T) {
 	mockRepo := new(MockTransactionItemRepository)
-	service := NewTransactionItemService(mockRepo)
+	mockProductRepo := new(MockProductRepository)
+	service := NewTransactionItemService(mockRepo, mockProductRepo)
 
 	expectedItems := []models.TransactionItem{
 		{TransactionID: 1, Quantity: 2},
@@ -81,7 +88,8 @@ func TestGetAllTransactionItems_Success(t *testing.T) {
 
 func TestGetTransactionItemByID_NotFound(t *testing.T) {
 	mockRepo := new(MockTransactionItemRepository)
-	service := NewTransactionItemService(mockRepo)
+	mockProductRepo := new(MockProductRepository)
+	service := NewTransactionItemService(mockRepo, mockProductRepo)
 
 	expectedErr := errors.New("record not found")
 	mockRepo.On("FindByID", uint(99)).Return(nil, expectedErr)
@@ -96,7 +104,8 @@ func TestGetTransactionItemByID_NotFound(t *testing.T) {
 
 func TestGetTransactionItemsByTransactionID_Success(t *testing.T) {
 	mockRepo := new(MockTransactionItemRepository)
-	service := NewTransactionItemService(mockRepo)
+	mockProductRepo := new(MockProductRepository)
+	service := NewTransactionItemService(mockRepo, mockProductRepo)
 
 	expectedItems := []models.TransactionItem{
 		{TransactionID: 1, ProductID: 2},

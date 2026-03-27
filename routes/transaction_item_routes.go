@@ -11,7 +11,8 @@ import (
 
 func SetupTransactionItemRoutes(api fiber.Router) {
 	transactionItemRepo := repositories.NewTransactionItemRepository(config.DB)
-	transactionItemService := services.NewTransactionItemService(transactionItemRepo)
+	productRepo := repositories.NewProductRepository(config.DB)
+	transactionItemService := services.NewTransactionItemService(transactionItemRepo, productRepo)
 	transactionItemHandler := handlers.NewTransactionItemHandler(transactionItemService)
 
 	transactionItems := api.Group("/transaction_items")
